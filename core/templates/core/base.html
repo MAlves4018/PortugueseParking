@@ -1,0 +1,34 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}SWD Demo Products{% endblock %}</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
+
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-icons.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/application.css' %}" rel="stylesheet">
+  </head>
+  <body>
+    <main>
+
+      <!-- content goes here -->
+      <div class="content">
+        {% block content %}
+        {% endblock %}
+      </div>
+      <!-- end of content block -->
+
+      <script src="{% static 'js/popper.min.js' %}"></script>  
+      <script src="{% static 'js/bootstrap.min.js' %}"></script>  
+      
+    </main>
+  </body>
+</html>

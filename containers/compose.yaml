@@ -1,0 +1,67 @@
+services:
+  
+  # use mariadb (= mysql derivate) as the databae
+  database:
+    image: mariadb:lts
+    restart: always
+    volumes:
+      # https://hub.docker.com/_/mariadb @ Initializing the database contents
+      - "./initial_data.sql:/docker-entrypoint-initdb.d/1.sql"
+    networks:
+      - backend
+    environment:
+      - MYSQL_DATABASE=django-database
+      - MYSQL_ROOT_PASSWORD=root-password
+    healthcheck:
+      test: ["CMD", "mariadb", "--user=root", "--password=root-password", "--execute", "use", "django-database"]
+      interval: 2s
+      timeout: 10s
+      retries: 3
+      start_period: 2s
+    ports:
+     - 3306:3306  
+  
+  # the Django app is run via gunicorn
+  app:
+      hostname: django-backend
+      build:
+        context: ../
+        dockerfile: ./containers/django-app/Dockerfile
+      image: django-app
+      environment:
+        - DJANGO_SUPERUSER_PASSWORD=admin
+      networks:
+        - backend
+      healthcheck:
+        test: ["CMD", "curl", "--fail", "http://localhost:8000/health"]
+        interval: 2s
+        timeout: 10s
+        retries: 3
+        start_period: 2s
+      depends_on:
+        database:
+          condition: service_healthy
+
+  # nginx is used to serve both the Django-app and static files
+  # only nginx exposes ports, `app` and `database` do not expose ports
+  # of the containers to the `outside` world
+  nginx:
+    build:
+        context: ../
+        dockerfile: ./containers/nginx/Dockerfile
+    image: nginx
+    volumes:
+      - ../static_dir:/home/app/web/staticfiles
+    ports:
+      # expose the nginx port of 80 (default http) and map it to 8000 on localhost
+      - 8000:80
+    networks:
+      - backend
+      - frontend
+    depends_on:
+        app:
+          condition: service_healthy
+
+networks:
+  backend:
+  frontend:

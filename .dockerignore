@@ -1,0 +1,15 @@
+db.sqlite3
+.git/
+.venv/
+.vscode/
+.env
+.gitignore
+.python-version
+.dockerignore
+cli.ps1
+compose.yaml
+README.md
+Dockerfile
+__pycache__/
+# Ignore generated files
+**/*.pyc
