@@ -22,8 +22,6 @@ from django.urls import include, path
 urlpatterns = [
     # Map the "/" URL to the "orders" application's URLs
     path("", include("core.urls")),
-    # Map the "orders/" URL to the "orders" application's URLs
-    path("orders/", include("orders.urls")),
     # Map the "admin/" URL to the Django admin site
     path("admin/", admin.site.urls),
 ]

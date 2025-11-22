@@ -40,9 +40,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "core.apps.CoreConfig",
     "customers.apps.CustomersConfig",
-    "products.apps.ProductsConfig",
-    # 'product_alternative.apps.ProductAlternativeConfig',
-    "orders.apps.OrdersConfig",
     "parking",
     "vehicles",
     "contracts",
@@ -126,11 +123,6 @@ LOGGING = {
             "handlers": ["console"],
             "level": "INFO",
         },
-        # Configure custom logger for the app
-        "orders": {
-            "handlers": ["console-verbose"],
-            "level": "DEBUG",
-        },
         # Add other app loggers as needed
     },
 }
@@ -198,9 +190,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # change default user model to our own
 AUTH_USER_MODEL = "customers.Customer"
-
-# Set the model to use for products
-PRODUCT_MODEL = "products.ProductBase"
 
 # Set the model to use for customers
 CUSTOMER_MODEL = "customers.CustomerBase"

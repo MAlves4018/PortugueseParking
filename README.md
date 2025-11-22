@@ -43,7 +43,7 @@ Best practice for any python development is to start with a virtual environment.
 4. Create an admin user: `uv run python manage.py createsuperuser`
 5. Run unit tests: `uv run python manage.py test -v 2`
 6. Run the development server: `uv run python manage.py runserver`.
-7. Open the website in your browser: `http://localhost:8000/admin`, `http://localhost:8000/orders`.
+7. Open the website in your browser: `http://localhost:8000/admin`.
 
 Or if you want to start with a fresh Django project from scratch:
 

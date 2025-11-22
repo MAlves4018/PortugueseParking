@@ -323,10 +323,6 @@ INSERT INTO `django_content_type` VALUES
 (4,'contenttypes','contenttype'),
 (7,'customers','customer'),
 (6,'customers','customerbase'),
-(10,'orders','order'),
-(11,'orders','orderposition'),
-(9,'products','product'),
-(8,'products','productbase'),
 (5,'sessions','session');
 /*!40000 ALTER TABLE `django_content_type` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -374,13 +370,6 @@ INSERT INTO `django_migrations` VALUES
 (18,'admin','0003_logentry_add_action_flag_choices','2025-09-06 12:37:05.473188'),
 (19,'customers','0002_customer_credit','2025-09-06 12:37:05.518833'),
 (20,'customers','0003_alter_customer_credit','2025-09-06 12:37:05.553690'),
-(21,'products','0001_initial','2025-09-06 12:37:05.617202'),
-(22,'orders','0001_initial','2025-09-06 12:37:05.816235'),
-(23,'orders','0002_alter_orderposition_order','2025-09-06 12:37:05.823533'),
-(24,'orders','0003_order_total_price','2025-09-06 12:37:05.869934'),
-(25,'products','0002_product_price','2025-09-06 12:37:05.913880'),
-(26,'products','0003_product_ek','2025-09-06 12:37:05.958909'),
-(27,'products','0004_remove_product_ek','2025-09-06 12:37:05.986736'),
 (28,'sessions','0001_initial','2025-09-06 12:37:06.036755');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -411,125 +400,3 @@ INSERT INTO `django_session` VALUES
 ('ghlusg59kfak0b7giq9wsixdnp9wjtyk','.eJxVjDsOwyAQBe9CHSEwyy9lep8BLbAEJxGWjF1FuXtsyUXSzsx7bxZwW2vYOi1hyuzKJLv8sojpSe0Q-YHtPvM0t3WZIj8SftrOxznT63a2fwcVe93XlkrKgApQFocktFBIKokM4HWW2rsoShyUsT6S8AOCAdqBVtK4QpZ9vvXpN_8:1uusAO:TvZHWPfs9igMcIv3VYPYeqxRrKrUgxe5LXs0w_hPCjY','2025-09-20 12:37:16.779130');
 /*!40000 ALTER TABLE `django_session` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `orders_order`
---
-
-DROP TABLE IF EXISTS `orders_order`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `orders_order` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) NOT NULL,
-  `total_price` double NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `orders_order_user_id_e9b59eb1_fk_customer_base_id` (`user_id`),
-  CONSTRAINT `orders_order_user_id_e9b59eb1_fk_customer_base_id` FOREIGN KEY (`user_id`) REFERENCES `customer_base` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `orders_order`
---
-
-LOCK TABLES `orders_order` WRITE;
-/*!40000 ALTER TABLE `orders_order` DISABLE KEYS */;
-/*!40000 ALTER TABLE `orders_order` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `orders_orderposition`
---
-
-DROP TABLE IF EXISTS `orders_orderposition`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `orders_orderposition` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `pos` int(10) unsigned NOT NULL CHECK (`pos` >= 0),
-  `quantity` int(11) NOT NULL,
-  `price` double NOT NULL,
-  `order_id` bigint(20) NOT NULL,
-  `product_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `orders_orderposition_order_id_pos_fe96b808_uniq` (`order_id`,`pos`),
-  KEY `orders_orderposition_product_id_ff5b8e10_fk_products_base_id` (`product_id`),
-  CONSTRAINT `orders_orderposition_order_id_f3bd1a11_fk_orders_order_id` FOREIGN KEY (`order_id`) REFERENCES `orders_order` (`id`),
-  CONSTRAINT `orders_orderposition_product_id_ff5b8e10_fk_products_base_id` FOREIGN KEY (`product_id`) REFERENCES `products_base` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `orders_orderposition`
---
-
-LOCK TABLES `orders_orderposition` WRITE;
-/*!40000 ALTER TABLE `orders_orderposition` DISABLE KEYS */;
-/*!40000 ALTER TABLE `orders_orderposition` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `products_base`
---
-
-DROP TABLE IF EXISTS `products_base`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `products_base` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(200) NOT NULL,
-  `description` longtext NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `products_base`
---
-
-LOCK TABLES `products_base` WRITE;
-/*!40000 ALTER TABLE `products_base` DISABLE KEYS */;
-INSERT INTO `products_base` VALUES
-(1,'Product1','Description Product1'),
-(2,'Product2','Description Product2');
-/*!40000 ALTER TABLE `products_base` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `products_simple`
---
-
-DROP TABLE IF EXISTS `products_simple`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `products_simple` (
-  `productbase_ptr_id` bigint(20) NOT NULL,
-  `price` double NOT NULL,
-  PRIMARY KEY (`productbase_ptr_id`),
-  CONSTRAINT `products_simple_productbase_ptr_id_2636bd0f_fk_products_base_id` FOREIGN KEY (`productbase_ptr_id`) REFERENCES `products_base` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `products_simple`
---
-
-LOCK TABLES `products_simple` WRITE;
-/*!40000 ALTER TABLE `products_simple` DISABLE KEYS */;
-INSERT INTO `products_simple` VALUES
-(1,11),
-(2,13);
-/*!40000 ALTER TABLE `products_simple` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
-
--- Dump completed on 2025-09-06 14:39:59

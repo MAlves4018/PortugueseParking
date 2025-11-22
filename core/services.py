@@ -4,7 +4,7 @@ from typing import List, Optional
 from django.db import models
 
 from core.dtos import CustomerDTO
-from core.models import Product, Customer
+from core.models import Customer
 
 """
 In this code, we are defining the interfaces for the services.
@@ -15,52 +15,6 @@ by any concrete class that implements the interface.
 # ==========================================
 # Existing interfaces (demo / base project)
 # ==========================================
-
-
-class IProductService(ABC):
-    """
-    Interface for product-related operations.
-    Part of the base demo project.
-    """
-    @abstractmethod
-    def get_all_products(self) -> List[Product]:
-        """Return all products."""
-        pass
-
-    @abstractmethod
-    def get_price(self, product: Product) -> float:
-        """Return the price of a given product."""
-        pass
-
-    @abstractmethod
-    def get_by_id(self, id: int) -> models.QuerySet:
-        """Return a queryset containing the product with the given ID."""
-        pass
-
-
-
-class IOrderService(ABC):
-    """
-    Interface for order-related operations.
-    Part of the base demo project.
-    """
-
-    @abstractmethod
-    def __init__(self, product_service: IProductService) -> None:
-        """Inject the product service dependency."""
-        pass
-
-    @abstractmethod
-    def get_all_products(self) -> List[Product]:
-        """Return all available products."""
-        pass
-
-    @abstractmethod
-    def get_product(self, product_id: int, product_service: IProductService) -> Product:
-        """Return a specific product using the product service."""
-        pass
-
-
 
 class ICustomerService(ABC):
     """

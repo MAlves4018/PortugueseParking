@@ -1,26 +1,4 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
-
-from core.managers import CoreProductManager
-
-
-# Create your models here.
-# we define an abstract class Product here, so that we can use different types of products later
-class Product(models.Model):
-    # Use custom manager to inherit the queryset methods from the CoreProductManager
-    objects = CoreProductManager()
-
-    # Make this class abstract to prevent it from being instantiated directly as it serves as an interface
-    class Meta:
-        abstract = True
-
-    # each product has a name and a description
-    name: str = models.CharField(max_length=200)
-    description: str = models.TextField()
-
-    def __str__(self) -> str:
-        return self.name
-
 
 """
 In Django, the AbstractUser class is a built-in model class that provides a starting point for creating a

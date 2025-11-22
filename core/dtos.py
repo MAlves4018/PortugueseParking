@@ -17,30 +17,3 @@ class CustomerDTO:
 
     def __str__(self) -> str:
         return self.username
-
-@dataclass
-class ProductDTO:
-    id: Optional[int]          # None before persistence
-    name: str
-    description: str
-    price: float
-
-    def __str__(self) -> str:
-        return self.name
-
-@dataclass
-class OrderPositionDTO:
-    pos: int
-    product: ProductDTO
-    quantity: int
-    price: float
-
-
-@dataclass
-class OrderDTO:
-    order_number: int
-    customer: CustomerDTO
-    order_positions: List[OrderPositionDTO]
-    total_price: float
-
-
