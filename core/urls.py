@@ -8,4 +8,5 @@ app_name = "core"
 urlpatterns = [
     # Map the index URL of the "core" application to the index view
     path("health", views.health_check, name="health_check"),
+    path('', views.home, name='home')
 ]

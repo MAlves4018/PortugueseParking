@@ -1,6 +1,9 @@
 from django.db import connections
 from django.http import JsonResponse
+from django.shortcuts import render
 
+def home(request):
+    return render(request, 'core/home.html', {})
 
 # Create your views here.
 def health_check(request):
