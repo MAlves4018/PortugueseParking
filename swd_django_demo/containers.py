@@ -1,36 +1,27 @@
-"""
-This file defines the project's dependency injection container.
-"""
-
 from dependency_injector import containers, providers
 
-# --- parking / tickets domain services ---
-from parking.services import PricingService, PaymentService
+from customers.services import CustomerService
+from parking.services import PricingService, PaymentService, SlotService
 from contracts.services import TicketService
-
+from vehicles.services import VehicleService
+from core.event_coordinator import EventCoordinator
 
 class Container(containers.DeclarativeContainer):
-    """Main DI container for the project."""
-
-    # Configuration provider (if you want to read settings later)
     config = providers.Configuration()
+    customer_service = providers.Factory(CustomerService)
+    pricing_service = providers.Factory(PricingService)
+    payment_service = providers.Factory(PaymentService)
+    slot_service = providers.Factory(SlotService)
+    vehicle_service = providers.Factory(VehicleService)
+    ticket_service = providers.Factory(TicketService)
 
-    # Parking pricing service
-    pricing_service = providers.Factory(
-        PricingService,
-    )
-
-    # Mocked payment service
-    payment_service = providers.Factory(
-        PaymentService,
-    )
-
-    # Ticket service, wired with pricing + payment
-    ticket_service = providers.Factory(
-        TicketService,
+    event_coordinator = providers.Factory(
+        EventCoordinator,
+        ticket_service=ticket_service,
+        slot_service=slot_service,
         pricing_service=pricing_service,
         payment_service=payment_service,
+        vehicle_service=vehicle_service,
     )
 
-# Global container instance (used by swd_django_demo.__init__.py)
 container = Container()

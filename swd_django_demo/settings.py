@@ -194,4 +194,6 @@ AUTH_USER_MODEL = "customers.Customer"
 # Set the model to use for customers
 CUSTOMER_MODEL = "customers.CustomerBase"
 
+VEHICLE_MODEL = "vehicles.Vehicle"
+
 SESSION_SERIALIZER = "django.contrib.sessions.serializers.JSONSerializer"

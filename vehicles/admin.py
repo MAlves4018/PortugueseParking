@@ -16,16 +16,21 @@ class VehicleAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "license_plate",
+        "owner",
+        "minimum_slot_type",
         "has_disability_permit",
-        "is_oversize",
+        "created_at",
     )
 
     list_filter = (
+        "minimum_slot_type",
         "has_disability_permit",
-        "is_oversize",
+        "owner",
     )
 
     search_fields = (
         "license_plate",
         "owner__username",
+        "owner__first_name",
+        "owner__last_name",
     )

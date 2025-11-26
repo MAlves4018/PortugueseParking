@@ -2,7 +2,6 @@ import uuid
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from vehicles.models import Vehicle
 from parking.models import ParkingSlot
 
 class PaymentStatus(models.TextChoices):
@@ -46,10 +45,11 @@ class Contract(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     vehicle = models.ForeignKey(
-        Vehicle,
+        settings.VEHICLE_MODEL,
         on_delete=models.CASCADE,
         related_name="contracts",
     )
+
     valid_from = models.DateTimeField()
     valid_to = models.DateTimeField()
     reserved_slot = models.ForeignKey(
@@ -64,10 +64,35 @@ class Contract(models.Model):
         verbose_name = "Contract"
         verbose_name_plural = "Contracts"
 
-def __str__(self) -> str:
+    def __str__(self) -> str:
         return f"{self.__class__.__name__} for {self.vehicle} [{self.valid_from} - {self.valid_to}]"
 
-    # Methods like isActive, hasOpenMovement, etc. will be added later.
+    def is_active(self, at=None) -> bool:
+        """
+        Returns True if this contract is valid at the given timestamp.
+        If 'at' is None, uses the current time.
+        """
+        at = at or timezone.now()
+        return self.valid_from <= at <= self.valid_to
+
+    def has_open_movement(self) -> bool:
+        """
+        Returns True if there is at least one movement without exit_time.
+        """
+        return self.movements.filter(exit_time__isnull=True).exists()
+
+    def get_active_movement(self):
+        """
+        Returns the first movement without exit_time, or None if there is none.
+        """
+        return self.movements.filter(exit_time__isnull=True).first()
+
+    def total_parked_minutes(self) -> int:
+        """
+        Aggregates the total duration in minutes of all movements of this contract.
+        Useful for reporting/statistics.
+        """
+        return sum(m.duration_minutes() for m in self.movements.all())
 
 class RegularContract(Contract):
     """
@@ -117,6 +142,9 @@ class Movement(models.Model):
             return 0
         delta = self.exit_time - self.entry_time
         return int(delta.total_seconds() // 60)
+
+    def is_open(self):
+        return self.exit_time is None
 
 class Ticket(models.Model):
     """

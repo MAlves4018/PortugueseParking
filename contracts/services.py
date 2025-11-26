@@ -86,7 +86,10 @@ class TicketService(ITicketService):
             }
 
         # 3) Calculate price using pricing service
-        price = self._pricing_service.get_season_price(slot_id=slot_id, period=(valid_from, valid_to))
+        price = self._pricing_service.get_season_price(
+            slot_id=slot_id,
+            period=(valid_from, valid_to),
+        )
 
         # 4) Process payment
         payment_success = self._payment_service.process_payment(
@@ -94,7 +97,6 @@ class TicketService(ITicketService):
             amount=price,
         )
         if not payment_success:
-            # According to UC: if payment fails, do not create ticket, release slot and log.
             return {
                 "success": False,
                 "reason": "Payment failed.",
@@ -107,8 +109,6 @@ class TicketService(ITicketService):
             valid_from=valid_from,
             valid_to=valid_to,
             reserved_slot=slot,
-            price=price,
-            # payment could be linked here if your PaymentService returns a model instance
         )
 
         return {

@@ -3,8 +3,8 @@
 from django.test import TestCase
 
 from customers.models import Customer
-from .models import Vehicle
-from .services import VehicleService
+from vehicles.models import Vehicle
+from vehicles.services import VehicleService
 
 
 class VehicleModelTests(TestCase):
@@ -31,7 +31,6 @@ class VehicleModelTests(TestCase):
         v = Vehicle.objects.create(
             owner=self.customer,
             license_plate="AA-11-BB",
-            is_oversize=False,
             has_disability_permit=True,
         )
 
@@ -41,7 +40,6 @@ class VehicleModelTests(TestCase):
         self.assertEqual(loaded.owner.pk, self.customer.pk)
         self.assertEqual(loaded.license_plate, "AA-11-BB")
         self.assertTrue(loaded.has_disability_permit)
-        self.assertFalse(loaded.is_oversize)
 
 
 class VehicleServiceTests(TestCase):
@@ -67,7 +65,6 @@ class VehicleServiceTests(TestCase):
         self.service.register_vehicle(
             owner=self.customer,
             license_plate="zz-99-yy",
-            is_oversize=True,
             has_disability_permit=False,
         )
 
@@ -76,7 +73,6 @@ class VehicleServiceTests(TestCase):
 
         self.assertIsNotNone(v)
         self.assertEqual(v.owner.pk, self.customer.pk)
-        self.assertTrue(v.is_oversize)
         self.assertFalse(v.has_disability_permit)
 
     def test_get_by_owner(self):

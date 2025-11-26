@@ -4,7 +4,7 @@ from typing import List, Optional
 from django.db import models
 
 from core.dtos import CustomerDTO
-from core.models import Customer
+from customers.models import Customer
 
 """
 In this code, we are defining the interfaces for the services.
@@ -51,16 +51,23 @@ class ITicketService(ABC):
     not fully defined yet.
     """
 
-    @abstractmethod
-    def purchase_season_ticket(self, customer_id, slot_id, license_plate):
+    class ITicketService(ABC):
         """
-        UC1: purchase a season ticket for a given customer, slot and license plate.
-        Should:
-          - calculate the correct price (using a pricing service),
-          - perform a payment (using a payment service),
-          - create and persist the season ticket.
+        Service interface for ticket-related operations.
+        UC1: Purchase a season ticket
+        UC2: Entry with season ticket
         """
-        pass
+
+        @abstractmethod
+        def purchase_season_ticket(self, customer_id, vehicle_plate, slot_id, valid_from, valid_to):
+            """
+            UC1: Purchase a season ticket.
+
+            - Assumes that slot availability and payment were already handled.
+            - Creates a RegularContract and reserves the slot.
+            - Returns a simple dict or DTO with the result.
+            """
+            pass
 
     @abstractmethod
     def enter_with_season_ticket(self, license_plate, gate_id):
