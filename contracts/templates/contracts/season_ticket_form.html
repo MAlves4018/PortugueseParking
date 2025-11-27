@@ -1,90 +1,212 @@
 {% extends "core/base.html" %}
+{% load static %}
 {% block title %}Buy Season Ticket{% endblock %}
 
 {% block content %}
-<h2>Buy Season Ticket</h2>
+<style>
+    /* 🚨 ESTILOS GLOBAIS DE BACKGROUND (Fundo Fixo) */
+    body {
+        font-family: sans-serif;
+        margin: 0;
+        background-image: url("{% static 'img/background.jpg' %}");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        background-attachment: fixed;
+        color: #f0f0f0;
+        padding: 0;
+        background-color: #121212;
+    }
 
-{% if errors %}
-<div class="alert alert-danger">
-  <ul class="mb-0">
-    {% for e in errors %}<li>{{ e }}</li>{% endfor %}
-  </ul>
+    /* 🚨 CONTAINER DE CENTRAMENTO TOTAL ABAIXO DA NAVBAR */
+    .full-page-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 56px);
+        width: 100%;
+        margin: 0 auto;
+        padding: 0;
+    }
+
+    /* 🚨 WRAPPER DA CAIXA DE VIDRO (AJUSTADO PARA O FORMULÁRIO DE COMPRA) */
+    .wrapper {
+      position: relative;
+      width: 600px;
+      height: auto;
+      min-height: 700px; /* Altura mínima para o formulário longo */
+      background: transparent;
+      border: 2px solid rgba(255, 255 ,255 ,.5);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 0;
+      margin-top: 50px;
+      margin-bottom: 50px; /* Margem extra para evitar que o formulário comprido cole na parte inferior */
+    }
+
+    .wrapper .form-box {
+      width: 100%;
+      padding: 40px;
+    }
+
+    .form-box h2 {
+      font-size: 2em;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    /* 🚨 ESTILOS DOS INPUTS, SELECTS E TEXTAREAS */
+    .form-control, .form-select, .form-check-input, textarea {
+      /* Estilos para todos os inputs, selects e textareas do Bootstrap */
+      background: rgba(0, 0, 0, 0.4) !important;
+      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      color: #f0f0f0 !important;
+      transition: all 0.3s;
+      box-sizing: border-box; /* Essencial para layout */
+    }
+
+    .form-control:focus, .form-select:focus, textarea:focus {
+        background: rgba(0, 0, 0, 0.6) !important;
+        border-color: #007bff !important;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25) !important;
+        color: #f0f0f0 !important;
+    }
+
+    /* 🚨 ESTILO DOS LABELS E TEXTO DE AJUDA */
+    .form-label, .form-text {
+        color: #f0f0f0 !important;
+        font-weight: 500;
+    }
+    .form-text {
+        font-size: 0.9em;
+        margin-top: 5px;
+    }
+
+    /* 🚨 ESTILOS DOS BOTÕES */
+    .btn {
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-primary {
+        background-color: #007bff !important;
+        border-color: #007bff !important;
+    }
+    .btn-success {
+        background-color: #28a745 !important;
+        border-color: #28a745 !important;
+    }
+    .btn-outline-secondary {
+        color: #bbb !important;
+        border-color: #bbb !important;
+        background-color: transparent !important;
+    }
+
+    /* 🚨 ALERT BOX CUSTOMIZADA (PARA O PREÇO) */
+    .alert-info {
+        background-color: rgba(0, 123, 255, 0.2) !important;
+        border-color: #007bff !important;
+        color: #f0f0f0 !important;
+    }
+</style>
+
+<div class="full-page-center">
+    <div class="wrapper">
+        <div class="form-box purchase-form">
+            <h2>Buy Season Ticket</h2>
+
+            {% if errors %}
+            <div class="alert alert-danger">
+              <ul class="mb-0">
+                {% for e in errors %}<li>{{ e }}</li>{% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+
+            <form method="post" class="mt-3">
+              {% csrf_token %}
+
+              <div class="mb-3">
+                <label class="form-label">Vehicle</label>
+                <select name="vehicle_id" class="form-select">
+                  <option value="">-- choose vehicle --</option>
+                  {% for v in vehicles %}
+                  <option value="{{ v.id }}"
+                    {% if form_data.vehicle_id == v.id|stringformat:'s' %}selected{% endif %}>
+                    {{ v.license_plate }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Valid from</label>
+                  <input type="datetime-local" name="valid_from" class="form-control"
+                         value="{{ form_data.valid_from|default_if_none:'' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Valid to</label>
+                  <input type="datetime-local" name="valid_to" class="form-control"
+                         value="{{ form_data.valid_to|default_if_none:'' }}">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Parking slot</label>
+                <select name="slot_id" class="form-select">
+                  <option value="">-- choose slot --</option>
+                  {% for s in slots %}
+                  <option value="{{ s.id }}"
+                    {% if form_data.slot_id == s.id|stringformat:'s' %}selected{% endif %}>
+                    {{ s.area.name }} / {{ s.number }} ({{ s.slot_type.code }}{% if s.is_accessible %}, accessible{% endif %})
+                  </option>
+                  {% endfor %}
+                </select>
+                <div class="form-text">
+                  After choosing vehicle and period, this list is filtered to show only compatible
+                  and available slots.
+                </div>
+              </div>
+
+              {% if price %}
+              <div class="mb-3">
+                <div class="alert alert-info mb-0">
+                  <strong>Price preview:</strong> {{ price }} €
+                </div>
+              </div>
+              {% endif %}
+
+              <div class="mb-3 d-flex justify-content-between">
+                <button type="submit" name="action" value="preview" class="btn btn-primary me-2">
+                  Show price
+                </button>
+
+                <button type="submit" name="action" value="confirm" class="btn btn-success"
+                        {% if not preview_mode %}disabled{% endif %}>
+                  Confirm purchase
+                </button>
+              </div>
+
+              <hr style="border-color: rgba(255, 255, 255, 0.2)">
+
+              <div class="mb-3">
+                <label class="form-label">Cancel order</label>
+                <textarea name="cancel_reason" class="form-control"
+                          placeholder="If you cancel, please tell us why."></textarea>
+                <button type="submit" name="action" value="cancel" class="btn btn-outline-secondary mt-2">
+                  Cancel
+                </button>
+              </div>
+            </form>
+
+        </div>
+    </div>
 </div>
-{% endif %}
-
-<form method="post" class="mt-3">
-  {% csrf_token %}
-  <div class="mb-3">
-    <label class="form-label">Vehicle</label>
-    <select name="vehicle_id" class="form-select">
-      <option value="">-- choose vehicle --</option>
-      {% for v in vehicles %}
-      <option value="{{ v.id }}"
-        {% if form_data.vehicle_id == v.id|stringformat:'s' %}selected{% endif %}>
-        {{ v.license_plate }}
-      </option>
-      {% endfor %}
-    </select>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6 mb-3">
-      <label class="form-label">Valid from</label>
-      <input type="datetime-local" name="valid_from" class="form-control"
-             value="{{ form_data.valid_from|default_if_none:'' }}">
-    </div>
-    <div class="col-md-6 mb-3">
-      <label class="form-label">Valid to</label>
-      <input type="datetime-local" name="valid_to" class="form-control"
-             value="{{ form_data.valid_to|default_if_none:'' }}">
-    </div>
-  </div>
-
-  <div class="mb-3">
-    <label class="form-label">Parking slot</label>
-    <select name="slot_id" class="form-select">
-      <option value="">-- choose slot --</option>
-      {% for s in slots %}
-      <option value="{{ s.id }}"
-        {% if form_data.slot_id == s.id|stringformat:'s' %}selected{% endif %}>
-        {{ s.area.name }} / {{ s.number }} ({{ s.slot_type.code }}{% if s.is_accessible %}, accessible{% endif %})
-      </option>
-      {% endfor %}
-    </select>
-    <div class="form-text">
-      After choosing vehicle and period, this list is filtered to show only compatible
-      and available slots.
-    </div>
-  </div>
-
-  {% if price %}
-  <div class="mb-3">
-    <div class="alert alert-info mb-0">
-      <strong>Price preview:</strong> {{ price }} €
-    </div>
-  </div>
-  {% endif %}
-
-  <div class="mb-3">
-    <button type="submit" name="action" value="preview" class="btn btn-primary">
-      Show price
-    </button>
-
-    <button type="submit" name="action" value="confirm" class="btn btn-success"
-            {% if not preview_mode %}disabled{% endif %}>
-      Confirm purchase
-    </button>
-  </div>
-
-  <hr>
-
-  <div class="mb-3">
-    <label class="form-label">Cancel order</label>
-    <textarea name="cancel_reason" class="form-control"
-              placeholder="If you cancel, please tell us why."></textarea>
-    <button type="submit" name="action" value="cancel" class="btn btn-outline-secondary mt-2">
-      Cancel
-    </button>
-  </div>
-</form>
 {% endblock %}

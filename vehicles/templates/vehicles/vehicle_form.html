@@ -1,46 +1,145 @@
 {% extends "core/base.html" %}
+{% load static %}
 {% block title %}Register Vehicle{% endblock %}
+
 {% block content %}
-<h2>Register Vehicle</h2>
+<style>
+    /* 🚨 ESTILOS GLOBAIS DE BACKGROUND */
+    body {
+        font-family: sans-serif;
+        margin: 0;
+        background-image: url("{% static 'img/background.jpg' %}");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        background-attachment: fixed;
+        color: #f0f0f0;
+        padding: 0;
+        background-color: #121212;
+    }
 
-{% if errors %}
-  <div class="alert alert-danger">
-    <ul class="mb-0">
-      {% for e in errors %}<li>{{ e }}</li>{% endfor %}
-    </ul>
-  </div>
-{% endif %}
+    /* 🚨 CONTAINER DE CENTRAMENTO TOTAL ABAIXO DA NAVBAR */
+    .full-page-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centra horizontalmente */
+        justify-content: center; /* Centra verticalmente */
+        min-height: calc(100vh - 56px);
+        width: 100%;
+        margin: 0 auto;
+        padding: 0;
+    }
 
-<form method="post" class="mt-3">
-  {% csrf_token %}
-  <div class="mb-3">
-    <label class="form-label">License plate</label>
-    <input type="text" name="license_plate" class="form-control"
-           value="{{ form_data.license_plate|default_if_none:'' }}">
-  </div>
+    /* 🚨 WRAPPER DA CAIXA DE VIDRO (Geral) */
+    .wrapper {
+      position: relative;
+      width: 450px; /* Largura ajustada para o formulário */
+      height: auto;
+      min-height: 450px; /* Altura mínima */
+      background: transparent;
+      border: 2px solid rgba(255, 255 ,255 ,.5);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 0;
+      margin-top: 50px; /* Empurrar para baixo após a navbar */
+    }
 
-  <div class="mb-3">
-    <label class="form-label">Minimum slot type</label>
-    <select name="minimum_slot_type" class="form-select">
-      <option value="">-- no restriction --</option>
-      {% for st in slot_types %}
-      <option value="{{ st.id }}"
-        {% if form_data.minimum_slot_type == st.id|stringformat:'s' %}selected{% endif %}>
-        {{ st.code }} - {{ st.name }}
-      </option>
-      {% endfor %}
-    </select>
-  </div>
+    .wrapper .form-box {
+      width: 100%;
+      padding: 40px;
+    }
 
-  <div class="form-check mb-3">
-    <input class="form-check-input" type="checkbox" name="has_disability_permit" id="id_has_disability"
-           {% if form_data.has_disability_permit %}checked{% endif %}>
-    <label class="form-check-label" for="id_has_disability">
-      Vehicle has disability permit
-    </label>
-  </div>
+    .form-box h2 {
+      font-size: 2em;
+      text-align: center;
+      margin-bottom: 30px;
+    }
 
-  <button type="submit" class="btn btn-success">Save</button>
-  <a href="{% url 'vehicles:vehicle_list' %}" class="btn btn-secondary">Cancel</a>
-</form>
+    /* 🚨 ESTILOS DOS INPUTS E SELECTS */
+    .form-control, .form-select, .btn {
+      /* Estilos para todos os inputs, selects e botões do Bootstrap */
+      background: rgba(0, 0, 0, 0.4) !important;
+      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      color: #f0f0f0 !important;
+      transition: all 0.3s;
+    }
+    .form-control:focus, .form-select:focus {
+        background: rgba(0, 0, 0, 0.6) !important;
+        border-color: #007bff !important;
+        box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25) !important;
+        color: #f0f0f0 !important;
+    }
+
+    /* 🚨 ESTILO CUSTOMIZADO PARA CHECKBOX */
+    .form-check-label {
+        color: #f0f0f0;
+    }
+
+    /* 🚨 ESTILOS DOS BOTÕES */
+    .btn-success {
+        background-color: #28a745 !important;
+        border-color: #28a745 !important;
+    }
+    .btn-secondary {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+    }
+
+</style>
+
+<div class="full-page-center">
+
+    <div class="wrapper">
+        <div class="form-box register">
+            <h2>Register Vehicle</h2>
+
+            {% if errors %}
+              <div class="alert alert-danger">
+                <ul class="mb-0">
+                  {% for e in errors %}<li>{{ e }}</li>{% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <form method="post" class="mt-3">
+              {% csrf_token %}
+
+              <div class="mb-3">
+                <label class="form-label">License plate</label>
+                <input type="text" name="license_plate" class="form-control"
+                       value="{{ form_data.license_plate|default_if_none:'' }}">
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Minimum slot type</label>
+                <select name="minimum_slot_type" class="form-select">
+                  <option value="">-- no restriction --</option>
+                  {% for st in slot_types %}
+                  <option value="{{ st.id }}"
+                    {% if form_data.minimum_slot_type == st.id|stringformat:'s' %}selected{% endif %}>
+                    {{ st.code }} - {{ st.name }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" name="has_disability_permit" id="id_has_disability"
+                       {% if form_data.has_disability_permit %}checked{% endif %}>
+                <label class="form-check-label" for="id_has_disability">
+                  Vehicle has disability permit
+                </label>
+              </div>
+
+              <button type="submit" class="btn btn-success">Save</button>
+              <a href="{% url 'vehicles:vehicle_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+
+        </div>
+    </div>
+</div>
 {% endblock %}

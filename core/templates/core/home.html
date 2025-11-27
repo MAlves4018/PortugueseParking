@@ -5,26 +5,48 @@
 
 {% block content %}
 <style>
-    /* Tudo escopado a .pp-home para não estragar o resto do site */
+
+    body {
+        /* Assumindo que a imagem está em 'img/background.jpg' */
+        background-image: url("{% static 'img/background.jpg' %}");
+        background-size: cover;
+        background-position: center;
+
+        /* 🚨 CORREÇÃO DO SCROLL: Fixa a imagem no ecrã */
+        background-attachment: fixed;
+
+        /* Garantir que o fundo é sempre escuro por segurança */
+        background-color: #121212 !important;
+    }
+
+    /* 🚨 REVERTER .pp-home: Remover estilos de fundo para não cobrir a imagem */
     .pp-home {
         font-family: sans-serif;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: calc(100vh - 80px); /* desconta navbar aprox. */
+
+        /* Ocupa todo o espaço vertical visível (correto) */
+        min-height: calc(100vh - 80px);
+        width: 100%;
         margin: 0;
-        background-color: #121212; /* Fundo preto escuro */
-        color: #f0f0f0; /* Texto claro */
-        padding: 20px;
+        padding: 20px 0;
+
+        /* 🚨 REVERSÃO: Garante que não tem cor de fundo sólida */
+        background-color: transparent !important;
+
+        color: #f0f0f0;
     }
+
+
 
     /* 1. Logótipo no Centro e Maior */
     .pp-home .logo-img {
         max-width: 90%;
         width: 650px; /* Definindo uma largura maior para destaque */
         height: auto;
-        margin-bottom: 50px; /* Espaço maior abaixo do logo */
+        display: block; /* Espaço maior abaixo do logo */
     }
 
     /* 2. Grupo de Botões e Texto */
@@ -32,14 +54,24 @@
         text-align: center; /* Garante que o texto e botões estão centrados */
         max-width: 400px;
         width: 100%;
+        /* 🚨 NOVO: Adicionar uma camada escura semi-transparente para contraste */
+        background: transparent;
+        padding: 25px; /* Espaçamento interno */
+        border: 2px solid rgba(255, 255 ,255 ,.5);
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); /* Sombra subtil */
+        backdrop-filter: blur(20px); /* Manter o efeito de vidro */
+
+        /* 🚨 CORREÇÃO: Remover a margem de 50px de baixo do logo-container, já temos margin-bottom no logo-container */
+        margin-top: 0;
     }
 
     /* Texto de Informação */
     .pp-home .button-group p {
         margin: 30px 0 30px; /* Mais espaço antes e depois do texto de registo */
-        color: #aaaaaa; /* Cor de texto mais suave */
+        color: #f0f0f0; /* Cor de texto mais suave */
         font-size: 1em;
-        font-weight: 300;
+        font-font: 500;
     }
 
     /* Estilo Base para os Botões */
@@ -76,11 +108,33 @@
     .pp-home .register-btn:hover {
         background-color: #1e7e34;
     }
+
+    .pp-home .logo-container{
+        padding: 10px 30px; <--- REDUZIR O PADDING LATERAL
+        padding: 10px 20px;
+        margin-bottom: 130px;
+
+         🚨 ALTERAÇÃO: Fundo mais escuro para contraste
+        background: transparent;
+        border: 2px solid rgba(255, 255 ,255 ,.5);
+        border-radius: 20px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+
+        display: inline-block;
+        width: max-content;
+
+        margin-top: -100px;
+    }
+
 </style>
 
 <div class="pp-home">
-    <img src="{% static 'images/PortugueseParkingLogo.png' %}"
+    <div class="logo-container">
+        <img src="{% static 'img/PortugueseParkingLogo.png' %}"
          alt="Logotipo PortugueseParking" class="logo-img">
+    </div>
+
 
     <div class="button-group">
         {% if user.is_authenticated %}

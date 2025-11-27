@@ -1,36 +1,127 @@
 {% extends "core/base.html" %}
+{% load static %}
 {% block title %}My Season Tickets{% endblock %}
-{% block content %}
-<h2>My Season Tickets</h2>
 
-{% if contracts %}
-<table class="table table-striped align-middle">
-  <thead>
-    <tr>
-      <th>Vehicle</th>
-      <th>Slot</th>
-      <th>Period</th>
-      <th>Price</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for c in contracts %}
-    <tr>
-      <td>{{ c.vehicle.license_plate }}</td>
-      <td>
-        {% if c.reserved_slot %}
-          {{ c.reserved_slot.area.name }} / {{ c.reserved_slot.number }}
-        {% else %}
-          -
-        {% endif %}
-      </td>
-      <td>{{ c.valid_from }} → {{ c.valid_to }}</td>
-      <td>{{ c.price }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p>You have no active or past season tickets.</p>
-{% endif %}
+{% block content %}
+<style>
+    /* 🚨 ESTILOS GLOBAIS DE BACKGROUND (Fundo Fixo) */
+    body {
+        font-family: sans-serif;
+        margin: 0;
+        background-image: url("{% static 'img/background.jpg' %}");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        background-attachment: fixed;
+        color: #f0f0f0;
+        padding: 0;
+        background-color: #121212;
+    }
+
+    /* 🚨 CONTAINER DE CENTRAMENTO TOTAL ABAIXO DA NAVBAR */
+    .full-page-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start; /* Alinhar o conteúdo ao topo (melhor para listas longas) */
+        min-height: calc(100vh - 56px);
+        width: 100%;
+        margin: 0 auto;
+        padding: 20px 0; /* Padding no topo para listas */
+    }
+
+    /* 🚨 WRAPPER DA CAIXA DE VIDRO (Geral) */
+    .wrapper {
+      position: relative;
+      width: 80%; /* Mais largo para acomodar a tabela */
+      height: auto;
+      min-height: 400px;
+      background: transparent;
+      border: 2px solid rgba(255, 255 ,255 ,.5);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+      padding: 20px 0;
+      margin-top: 50px;
+      margin-bottom: 50px;
+    }
+
+    .wrapper .content-box {
+      width: 100%;
+      padding: 40px;
+    }
+
+    .content-box h2 {
+      font-size: 2em;
+      text-align: left;
+      margin-bottom: 30px;
+      color: #fff;
+    }
+
+    /* 🚨 ESTILOS DA TABELA PARA FUNDO ESCURO */
+    .table {
+        color: #f0f0f0; /* Texto da tabela branco */
+        background-color: transparent !important;
+        margin-top: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.3); /* Borda visível */
+        width: 100%;
+    }
+    .table th {
+        border-bottom: 2px solid rgba(255, 255, 255, 0.5); /* Separador de cabeçalho */
+        color: #ddd;
+    }
+    .table-striped > tbody > tr:nth-of-type(odd) {
+        /* Fundo para linhas ímpares (melhor contraste) */
+        background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    .table-striped > tbody > tr:hover {
+        background-color: rgba(255, 255, 255, 0.2) !important; /* Efeito hover */
+    }
+    .table td, .table th {
+        border-color: rgba(255, 255, 255, 0.1);
+        padding: 12px;
+    }
+
+</style>
+
+<div class="full-page-center">
+    <div class="wrapper">
+        <div class="content-box">
+
+            <h2>My Season Tickets</h2>
+
+            {% if contracts %}
+            <table class="table table-striped align-middle">
+              <thead>
+                <tr>
+                  <th>Vehicle</th>
+                  <th>Slot</th>
+                  <th>Period</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for c in contracts %}
+                <tr>
+                  <td>{{ c.vehicle.license_plate }}</td>
+                  <td>
+                    {% if c.reserved_slot %}
+                      {{ c.reserved_slot.area.name }} / {{ c.reserved_slot.number }}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                  <td>{{ c.valid_from }} → {{ c.valid_to }}</td>
+                  <td>{{ c.price }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% else %}
+            <p>You have no active or past season tickets.</p>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
 {% endblock %}

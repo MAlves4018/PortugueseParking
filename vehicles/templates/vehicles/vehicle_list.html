@@ -1,31 +1,82 @@
 {% extends "core/base.html" %}
 {% block title %}My Vehicles{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h2>My Vehicles</h2>
-  <a href="{% url 'vehicles:vehicle_create' %}" class="btn btn-primary">Add vehicle</a>
-</div>
+{% load static %}
+<style>
 
-{% if vehicles %}
-<table class="table table-striped align-middle">
-  <thead>
-    <tr>
-      <th>Plate</th>
-      <th>Minimum slot type</th>
-      <th>Disability permit</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for v in vehicles %}
-    <tr>
-      <td>{{ v.license_plate }}</td>
-      <td>{% if v.minimum_slot_type %}{{ v.minimum_slot_type.code }}{% else %}-{% endif %}</td>
-      <td>{% if v.has_disability_permit %}Yes{% else %}No{% endif %}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p>You have no registered vehicles yet.</p>
-{% endif %}
+    body {
+        /* Assumindo que a imagem está em 'img/background.jpg' */
+        background-image: url("{% static 'img/background.jpg' %}");
+        background-size: cover;
+        background-position: center;
+
+        /* 🚨 CORREÇÃO DO SCROLL: Fixa a imagem no ecrã */
+        background-attachment: fixed;
+
+        /* Garantir que o fundo é sempre escuro por segurança */
+        background-color: #121212 !important;
+    }
+
+    .vehicles-wrapper {
+        text-align: left; /* Manter o alinhamento do texto e do botão */
+        padding: 25px; /* Espaçamento interno */
+
+        /* Propriedades de Glassmorphism */
+        background: transparent;
+        border: 2px solid rgba(255, 255 ,255 ,.5);
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(20px);
+
+        /* Ajustes para o layout do veículo */
+        width: 80%; /* Para que não ocupe o ecrã todo */
+        margin: 50px auto; /* Adicionar margem superior e centrar */
+        color: #f0f0f0;
+    }
+
+    .vehicles-wrapper .table {
+        color: #f0f0f0; /* Texto da tabela branco */
+        background-color: transparent !important;
+        margin-top: 20px;
+        border: none;
+    }
+
+    .vehicles-wrapper .table-striped > tbody > tr:nth-of-type(odd) {
+        /* Cor da linha ímpar (para contraste) */
+        background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+</style>
+
+<div class="vehicles-wrapper">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>My Vehicles</h2>
+        <a href="{% url 'vehicles:vehicle_create' %}" class="btn btn-primary">Add vehicle</a>
+    </div>
+
+    {% if vehicles %}
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Plate</th>
+                <th>Minimum slot type</th>
+                <th>Disability permit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in vehicles %}
+            <tr>
+                <td>{{ v.license_plate }}</td>
+                <td>{% if v.minimum_slot_type %}{{ v.minimum_slot_type.code }}{% else %}-{% endif %}</td>
+                <td>{% if v.has_disability_permit %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>You have no registered vehicles yet.</p>
+    {% endif %}
+
+</div>
 {% endblock %}

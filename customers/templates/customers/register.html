@@ -1,25 +1,319 @@
-<!-- customers/templates/customers/register.html -->
 {% extends "core/base.html" %}
-{% block title %}Register{% endblock %}
+{% load static %}
+{% block title %}Registo{% endblock %}
 
 {% block content %}
-<h2>Create an account</h2>
+<style>
+    /* 🚨 ESTILOS GLOBAIS DE BACKGROUND */
+    body {
+        font-family: sans-serif;
+        margin: 0;
+        background-image: url("{% static 'img/background.jpg' %}");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center center;
+        background-attachment: fixed;
+        color: #f0f0f0;
+        padding: 0;
+        background-color: #121212;
+    }
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.non_field_errors }}
-  
-  {% for field in form %}
-    <div class="mb-3">
-      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-      {{ field }}
-      {% if field.help_text %}
-        <small class="form-text text-muted">{{ field.help_text }}</small>
-      {% endif %}
-      {{ field.errors }}
+    /* 🚨 TEXTO DE AJUDA E ERROS (CORRIGIDO CONTRASTE) */
+    .form-text.text-muted {
+        color: #FFFFFF !important; /* Mudar para branco puro */
+        font-weight: 500;
+        font-size: 0.8em;
+        display: block;
+        margin-top: 5px;
+        padding-left: 5px;
+    }
+
+    .text-danger {
+        color: #ff6666 !important; /* Vermelho claro/visível */
+        font-weight: 600;
+        padding-left: 5px;
+    }
+
+    /* 🚨 CONTAINER DE CENTRAMENTO TOTAL ABAIXO DA NAVBAR */
+    .full-page-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 56px);
+        width: 100%;
+        margin: 0 auto;
+        padding: 0;
+    }
+
+    /* 🚨 LOGOTIPO */
+    .logo-container {
+      padding: 10px 30px;
+      margin-bottom: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .logo-img {
+      max-width: 90%;
+      width: 350px;
+      height: auto;
+      display: block;
+    }
+
+    /* 🚨 WRAPPER DA CAIXA DE VIDRO */
+    .wrapper {
+      position: relative;
+      width: 600px;
+      height: auto;
+      min-height: 550px;
+      background: transparent;
+      border: 2px solid rgba(255, 255 ,255 ,.5);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 0 30px rgba(0, 0, 0, .5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 0;
+    }
+
+    .wrapper .form-box {
+      width: 100%;
+      padding: 40px;
+    }
+
+    .form-box h2 {
+      font-size: 2em;
+      text-align: center;
+    }
+
+    /* 🚨 NOVO: CONTAINER DE DUAS COLUNAS */
+    .two-col-group {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        width: 100%;
+    }
+
+
+    /* 🚨 INPUT BOX PRINCIPAL (Container que suporta help_text e erros) */
+    .input-box {
+      position: relative;
+      width: 100%;
+      height: auto;
+      min-height: 50px;
+      margin: 15px 0;
+    }
+
+    /* 🚨 WRAPPER DO CAMPO: Onde a borda e o input/label estão */
+    .input-field-wrapper {
+        position: relative;
+        width: 100%;
+        height: 50px; /* Altura que o label flutuante usa */
+        border-bottom: 2px solid;
+    }
+
+    .input-box label {
+      position: absolute;
+      top: 50%; /* Faz o label começar no centro */
+      left: 5px;
+      transform: translateY(-50%); /* Ajuste vertical */
+      font-size: 1em;
+      font-weight: 500;
+      pointer-events: none;
+      transition: .5s;
+      color: #f0f0f0; /* Garante que é branco */
+    }
+
+    .input-box input:focus~label,
+    .input-box input:valid~label {
+      top: -5px; /* Sobe para cima */
+    }
+
+   .input-box input:not(:placeholder-shown):not(:focus)~label {
+        top: -5px;
+        transform: none;
+    }
+
+    /* Input real gerado pelo Django */
+    .input-box input {
+          width: 100%;
+          height: 100%;
+          background: transparent;
+          border: none;
+          outline: none;
+          font-size: 1em;
+          color: white;
+          font-weight: 600;
+          padding: 0 35px 0 5px;
+        }
+
+    /* Ajuste para textarea (Morada) */
+    .input-box textarea {
+        width: 100%;
+        min-height: 80px;
+        background: rgba(0,0,0,0.2);
+        border: 1px solid rgba(255,255,255,0.3);
+        outline: none;
+        color: white;
+        padding: 5px;
+        font-size: 1em;
+        margin-top: 10px;
+        border-radius: 5px;
+    }
+
+    .input-box .icon {
+      position: absolute;
+      right: 8px;
+      line-height: 50px;
+      pointer-events: none; /* Manter isto para que o clique vá para o input por baixo */
+      z-index: 5;
+    }
+
+    .btn {
+      width: 100%;
+      height: 45px;
+      background: #121416;
+      border: none;
+      outline: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+      color: white;
+      font-weight: 500;
+      margin-top: 25px;
+    }
+
+    .login-register {
+      font-size: .9em;
+      text-align: center;
+      font-weight: 500;
+      margin: 25px 0 10px;
+    }
+    .login-register p a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .login-register p a:hover {
+      text-decoration: underline;
+    }
+
+</style>
+
+<div class="full-page-center">
+    <div class="logo-container">
+        <img src="{% static 'img/PortugueseParkingLogo.png' %}"
+             alt="Logotipo PortugueseParking" class="logo-img">
     </div>
-  {% endfor %}
 
-  <button type="submit" class="btn btn-primary">Register</button>
-</form>
+    <div class="wrapper">
+        <div class="form-box register">
+            <h2>Registration</h2>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="text-danger mb-3">{{ form.non_field_errors }}</div>
+
+
+                <div class="two-col-group">
+                    {% with field=form.username %}
+                    <div class="input-box">
+                        <div class="input-field-wrapper">
+                            <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                            {{ field }}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                        {% if field.help_text %} <small class="form-text text-muted">{{ field.help_text }}</small> {% endif %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    </div>
+                    {% endwith %}
+
+                    {% with field=form.email %}
+                    <div class="input-box">
+                        <div class="input-field-wrapper">
+                            <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                            {{ field }}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                        {% if field.help_text %} <small class="form-text text-muted">{{ field.help_text }}</small> {% endif %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    </div>
+                    {% endwith %}
+                </div>
+
+                <div class="two-col-group">
+                    {% with field=form.ssn %}
+                    <div class="input-box">
+                        <div class="input-field-wrapper">
+                            <span class="icon"><ion-icon name="card"></ion-icon></span>
+                            {{ field }}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                        {% if field.help_text %} <small class="form-text text-muted">{{ field.help_text }}</small> {% endif %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    </div>
+                    {% endwith %}
+
+                    <div class="input-box">
+                        <div class="input-field-wrapper">
+                            <span class="icon"><ion-icon name="person"></ion-icon></span>
+                            <input type="text" id="id_full_name" required>
+                            <label for="id_full_name">Full Name</label>
+                        </div>
+                    </div>
+                </div>
+
+                {% with field=form.billing_info %}
+                <div class="input-box">
+                    <label for="{{ field.id_for_label }}" style="position: static; transform: none; display: block; margin-bottom: 5px;">Morada (Faturação)</label>
+                    {{ field }} {% if field.help_text %} <small class="form-text text-muted">{{ field.help_text }}</small> {% endif %}
+                    <div class="text-danger">{{ field.errors }}</div>
+                </div>
+                {% endwith %}
+
+                <div class="two-col-group">
+                    {% with field=form.password1 %}
+                    <div class="input-box">
+                        <div class="input-field-wrapper">
+                            <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                            {{ field }}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                        {% if field.help_text %} <small class="form-text text-muted">{{ field.help_text }}</small> {% endif %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    </div>
+                    {% endwith %}
+
+                    {% with field=form.password2 %}
+                    <div class="input-box">
+                        <div class="input-field-wrapper">
+                            <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                            {{ field }}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                        {% if field.help_text %} <small class="form-text text-muted">{{ field.help_text }}</small> {% endif %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    </div>
+                    {% endwith %}
+                </div>
+
+                <button type="submit" class="btn">Registration</button>
+
+                <div class="login-register">
+                    <p>Already have an account??
+                        <a href="{% url 'customers:login' %}" class="register-link">Login</a>
+                    </p>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 {% endblock %}

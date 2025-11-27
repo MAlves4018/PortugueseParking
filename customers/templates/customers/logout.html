@@ -1,11 +1,75 @@
 {% extends "core/base.html" %}
 {% block title %}Logout{% endblock %}
 {% block content %}
-<h2>Logout</h2>
-<form method="post">
-  {% csrf_token %}
-  <p>Do you really want to logout?</p>
-  <button type="submit" class="btn btn-danger">Logout</button>
-  <a href="{% url 'core:home' %}" class="btn btn-secondary">Cancel</a>
-</form>
-{% endblock %}
+{% load static %}
+<style>
+
+    body {
+        /* Assumindo que a imagem está em 'img/background.jpg' */
+        background-image: url("{% static 'img/background.jpg' %}");
+        background-size: cover;
+        background-position: center;
+
+        /* 🚨 CORREÇÃO DO SCROLL: Fixa a imagem no ecrã */
+        background-attachment: fixed;
+
+        /* Garantir que o fundo é sempre escuro por segurança */
+        background-color: #121212 !important;
+    }
+
+    .full-page-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centra horizontalmente */
+        justify-content: center; /* Centra verticalmente */
+
+        /* Ocupa o espaço visível (abaixo da navbar) */
+        min-height: calc(100vh - 56px); /* 56px é a altura típica de uma navbar Bootstrap */
+        width: 100%;
+        margin: 0 auto;
+        padding: 0;
+        }
+
+    .button-group {
+        text-align: center; /* Garante que o texto e botões estão centrados */
+        max-width: 400px;
+        width: 100%;
+        /* 🚨 NOVO: Adicionar uma camada escura semi-transparente para contraste */
+        background: transparent;
+        padding: 25px; /* Espaçamento interno */
+        border: 2px solid rgba(255, 255 ,255 ,.5);
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); /* Sombra subtil */
+        backdrop-filter: blur(20px); /* Manter o efeito de vidro */
+
+        /* 🚨 CORREÇÃO: Remover a margem de 50px de baixo do logo-container, já temos margin-bottom no logo-container */
+        margin-top: 0;
+    }
+
+    .button-group p {
+        margin: 30px 0 30px; /* Mais espaço antes e depois do texto de registo */
+        color: #f0f0f0; /* Cor de texto mais suave */
+        font-size: 1em;
+        font-font: 500;
+    }
+
+    .button-group h2 {
+        color: #f0f0f0;
+    }
+
+</style>
+
+<div class="full-page-center">
+    <div class="button-group">
+        <h2>Logout</h2>
+
+        <form method="post">
+          {% csrf_token %}
+          <p>Do you really want to logout?</p>
+          <button type="submit" class="btn btn-danger">Logout</button>
+          <a href="{% url 'core:home' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+        {% endblock %}
+    </div>
+</div>
+
