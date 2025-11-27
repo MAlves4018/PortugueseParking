@@ -66,9 +66,10 @@ class TicketService(ITicketService):
         """
 
         # 1) Load vehicle and slot
+        normalized_plate = vehicle_plate.strip().upper()
         vehicle = self._vehicle_repo.select_for_update().get(
             owner_id=customer_id,
-            license_plate=vehicle_plate,
+            license_plate=normalized_plate,
         )
         slot = self._slot_repo.select_for_update().get(pk=slot_id)
 
@@ -109,6 +110,7 @@ class TicketService(ITicketService):
             valid_from=valid_from,
             valid_to=valid_to,
             reserved_slot=slot,
+            price = price,
         )
 
         return {
@@ -131,10 +133,10 @@ class TicketService(ITicketService):
         """
 
         now = timezone.now()
-
+        normalized_plate = license_plate.strip().upper()
         # 1) Find vehicle by license plate
         try:
-            vehicle = self._vehicle_repo.get(license_plate=license_plate)
+            vehicle = self._vehicle_repo.get(license_plate=normalized_plate)
         except self._vehicle_repo.model.DoesNotExist:
             return {
                 "success": False,
@@ -190,5 +192,82 @@ class TicketService(ITicketService):
             "success": True,
             "open_gate": True,
             "reason": "Entry granted.",
+            "movement_id": movement.pk,
+        }
+
+    def exit_with_season_ticket(self, license_plate, gate_id):
+        """
+        Handles exit with a season ticket:
+
+        - Find vehicle by license plate
+        - Find active contract
+        - Find open movement (no exit_time)
+        - Close movement and open gate
+        """
+        now = timezone.now()
+        normalized_plate = license_plate.strip().upper()
+
+        with transaction.atomic():
+            # 1) Find vehicle
+            try:
+                vehicle = self._vehicle_repo.get(license_plate=normalized_plate)
+            except self._vehicle_repo.model.DoesNotExist:
+                return {
+                    "success": False,
+                    "open_gate": False,
+                    "reason": "No vehicle with this license plate.",
+                }
+
+            # 2) Active season contract
+            contract = (
+                self._contract_repo
+                .select_for_update()
+                .filter(
+                    vehicle=vehicle,
+                    valid_from__lte=now,
+                    valid_to__gte=now,
+                )
+                .first()
+            )
+            if not contract:
+                return {
+                    "success": False,
+                    "open_gate": False,
+                    "reason": "No active season ticket for this vehicle.",
+                }
+
+            # 3) Open movement
+            movement = (
+                self._movement_repo
+                .select_for_update()
+                .filter(contract=contract, exit_time__isnull=True)
+                .order_by("-entry_time")
+                .first()
+            )
+            if not movement:
+                return {
+                    "success": False,
+                    "open_gate": False,
+                    "reason": "No open entry for this ticket.",
+                }
+
+            # 4) Validate gate
+            try:
+                gate = self._gate_repo.get(pk=gate_id)
+            except self._gate_repo.model.DoesNotExist:
+                return {
+                    "success": False,
+                    "open_gate": False,
+                    "reason": "Gate not found.",
+                }
+
+            # 5) Close movement
+            movement.exit_time = now
+            movement.save(update_fields=["exit_time"])
+
+        return {
+            "success": True,
+            "open_gate": True,
+            "reason": "Exit granted.",
             "movement_id": movement.pk,
         }

@@ -81,6 +81,17 @@ class ITicketService(ABC):
         """
         pass
 
+    def exit_with_season_ticket(self, license_plate: str, gate_id):
+        """
+        UC2: handle exit at a gate using a license plate.
+        Should:
+          - validate that there is a valid movement in progress,
+          - update the entry movement,
+          - return a result that tells the gate whether to open or not.
+        """
+        pass
+
+
 
 class IPricingService(ABC):
     """

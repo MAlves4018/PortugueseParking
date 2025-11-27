@@ -1,93 +1,101 @@
+{% extends "core/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <title>PortugueseParking - Start</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #121212; /* Fundo Preto Escuro */
-            color: #f0f0f0; /* Texto claro */
-            padding: 20px;
-        }
 
-        /* 1. Logótipo no Centro e Maior */
-        .logo-img {
-            max-width: 90%;
-            width: 650px; /* Definindo uma largura maior para destaque */
-            height: auto;
-            margin-bottom: 50px; /* Espaço maior abaixo do logo */
-        }
+{% block title %}PortugueseParking - Start{% endblock %}
 
-        /* 2. Grupo de Botões e Texto */
-        .button-group {
-            text-align: center; /* Garante que o texto e botões estão centrados */
-            max-width: 400px;
-            width: 100%;
-        }
+{% block content %}
+<style>
+    /* Tudo escopado a .pp-home para não estragar o resto do site */
+    .pp-home {
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: calc(100vh - 80px); /* desconta navbar aprox. */
+        margin: 0;
+        background-color: #121212; /* Fundo preto escuro */
+        color: #f0f0f0; /* Texto claro */
+        padding: 20px;
+    }
 
-        /* Texto de Informação */
-        .button-group p {
-            margin: 30px 0 30px; /* Mais espaço antes e depois do texto de registo */
-            color: #aaaaaa; /* Cor de texto mais suave */
-            font-size: 1em;
-            font-weight: 300;
-        }
+    /* 1. Logótipo no Centro e Maior */
+    .pp-home .logo-img {
+        max-width: 90%;
+        width: 650px; /* Definindo uma largura maior para destaque */
+        height: auto;
+        margin-bottom: 50px; /* Espaço maior abaixo do logo */
+    }
 
-        /* Estilo Base para os Botões */
-        .button-group a {
-            padding: 15px 30px; /* Botões maiores e mais fáceis de clicar */
-            text-decoration: none;
-            color: white;
-            border-radius: 8px; /* Cantos ligeiramente mais arredondados */
-            transition: background-color 0.3s, transform 0.1s;
-            font-weight: bold;
-            display: block; /* Ocupa a largura total da .button-group */
-            width: 100%;
-            box-sizing: border-box;
-            text-transform: uppercase;
-        }
+    /* 2. Grupo de Botões e Texto */
+    .pp-home .button-group {
+        text-align: center; /* Garante que o texto e botões estão centrados */
+        max-width: 400px;
+        width: 100%;
+    }
 
-        /* Estilos Específicos */
-        .login-btn {
-            background-color: #007bff; /* Azul primário */
-            margin-bottom: 15px; /* Espaço após o Login */
-        }
-        .register-btn {
-            background-color: #28a745; /* Verde para Registo */
-            /* Margin será adicionada pelo <p> acima */
-        }
+    /* Texto de Informação */
+    .pp-home .button-group p {
+        margin: 30px 0 30px; /* Mais espaço antes e depois do texto de registo */
+        color: #aaaaaa; /* Cor de texto mais suave */
+        font-size: 1em;
+        font-weight: 300;
+    }
 
-        /* Efeitos Hover */
-        .login-btn:hover, .register-btn:hover {
-            transform: translateY(-2px); /* Efeito subtil ao passar o rato */
-        }
-        .login-btn:hover {
-            background-color: #0056b3;
-        }
-        .register-btn:hover {
-            background-color: #1e7e34;
-        }
-    </style>
-</head>
-<body>
+    /* Estilo Base para os Botões */
+    .pp-home .button-group a {
+        padding: 15px 30px; /* Botões maiores e mais fáceis de clicar */
+        text-decoration: none;
+        color: white;
+        border-radius: 8px; /* Cantos ligeiramente mais arredondados */
+        transition: background-color 0.3s, transform 0.1s;
+        font-weight: bold;
+        display: block; /* Ocupa a largura total da .button-group */
+        width: 100%;
+        box-sizing: border-box;
+        text-transform: uppercase;
+    }
 
-    <img src="{% static 'images/PortugueseParkingLogo.png' %}" alt="Logotipo PortugueseParking" class="logo-img">
+    /* Estilos Específicos */
+    .pp-home .login-btn {
+        background-color: #007bff; /* Azul primário */
+        margin-bottom: 15px; /* Espaço após o Login */
+    }
+    .pp-home .register-btn {
+        background-color: #28a745; /* Verde para Registo */
+        /* Margin será adicionada pelo <p> acima */
+    }
+
+    /* Efeitos Hover */
+    .pp-home .login-btn:hover, .pp-home .register-btn:hover {
+        transform: translateY(-2px); /* Efeito subtil ao passar o rato */
+    }
+    .pp-home .login-btn:hover {
+        background-color: #0056b3;
+    }
+    .pp-home .register-btn:hover {
+        background-color: #1e7e34;
+    }
+</style>
+
+<div class="pp-home">
+    <img src="{% static 'images/PortugueseParkingLogo.png' %}"
+         alt="Logotipo PortugueseParking" class="logo-img">
 
     <div class="button-group">
-        <a href="#" class="login-btn">Login</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'vehicles:vehicle_list' %}" class="login-btn">Go to my vehicles</a>
 
-        <p>If you don't have an account, register so you can start.</p>
+            <p>You are logged in. You can manage your vehicles and buy season tickets.</p>
 
-        <a href="#" class="register-btn">Register</a>
+            <a href="{% url 'contracts:season_ticket_new' %}" class="register-btn">Buy Season Ticket</a>
+        {% else %}
+            <a href="{% url 'customers:login' %}" class="login-btn">Login</a>
+
+            <p>If you don't have an account, register so you can start.</p>
+
+            <a href="{% url 'customers:register' %}" class="register-btn">Register</a>
+        {% endif %}
     </div>
-
-</body>
-</html>
+</div>
+{% endblock %}

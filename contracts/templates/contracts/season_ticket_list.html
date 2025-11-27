@@ -1,0 +1,36 @@
+{% extends "core/base.html" %}
+{% block title %}My Season Tickets{% endblock %}
+{% block content %}
+<h2>My Season Tickets</h2>
+
+{% if contracts %}
+<table class="table table-striped align-middle">
+  <thead>
+    <tr>
+      <th>Vehicle</th>
+      <th>Slot</th>
+      <th>Period</th>
+      <th>Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in contracts %}
+    <tr>
+      <td>{{ c.vehicle.license_plate }}</td>
+      <td>
+        {% if c.reserved_slot %}
+          {{ c.reserved_slot.area.name }} / {{ c.reserved_slot.number }}
+        {% else %}
+          -
+        {% endif %}
+      </td>
+      <td>{{ c.valid_from }} → {{ c.valid_to }}</td>
+      <td>{{ c.price }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>You have no active or past season tickets.</p>
+{% endif %}
+{% endblock %}

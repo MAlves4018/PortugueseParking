@@ -1,0 +1,25 @@
+<!-- customers/templates/customers/register.html -->
+{% extends "core/base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<h2>Create an account</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  
+  {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}
+        <small class="form-text text-muted">{{ field.help_text }}</small>
+      {% endif %}
+      {{ field.errors }}
+    </div>
+  {% endfor %}
+
+  <button type="submit" class="btn btn-primary">Register</button>
+</form>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "core/base.html" %}
+{% block title %}My Vehicles{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>My Vehicles</h2>
+  <a href="{% url 'vehicles:vehicle_create' %}" class="btn btn-primary">Add vehicle</a>
+</div>
+
+{% if vehicles %}
+<table class="table table-striped align-middle">
+  <thead>
+    <tr>
+      <th>Plate</th>
+      <th>Minimum slot type</th>
+      <th>Disability permit</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for v in vehicles %}
+    <tr>
+      <td>{{ v.license_plate }}</td>
+      <td>{% if v.minimum_slot_type %}{{ v.minimum_slot_type.code }}{% else %}-{% endif %}</td>
+      <td>{% if v.has_disability_permit %}Yes{% else %}No{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>You have no registered vehicles yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "core/base.html" %}
+{% block title %}Buy Season Ticket{% endblock %}
+
+{% block content %}
+<h2>Buy Season Ticket</h2>
+
+{% if errors %}
+<div class="alert alert-danger">
+  <ul class="mb-0">
+    {% for e in errors %}<li>{{ e }}</li>{% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<form method="post" class="mt-3">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label class="form-label">Vehicle</label>
+    <select name="vehicle_id" class="form-select">
+      <option value="">-- choose vehicle --</option>
+      {% for v in vehicles %}
+      <option value="{{ v.id }}"
+        {% if form_data.vehicle_id == v.id|stringformat:'s' %}selected{% endif %}>
+        {{ v.license_plate }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Valid from</label>
+      <input type="datetime-local" name="valid_from" class="form-control"
+             value="{{ form_data.valid_from|default_if_none:'' }}">
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Valid to</label>
+      <input type="datetime-local" name="valid_to" class="form-control"
+             value="{{ form_data.valid_to|default_if_none:'' }}">
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Parking slot</label>
+    <select name="slot_id" class="form-select">
+      <option value="">-- choose slot --</option>
+      {% for s in slots %}
+      <option value="{{ s.id }}"
+        {% if form_data.slot_id == s.id|stringformat:'s' %}selected{% endif %}>
+        {{ s.area.name }} / {{ s.number }} ({{ s.slot_type.code }}{% if s.is_accessible %}, accessible{% endif %})
+      </option>
+      {% endfor %}
+    </select>
+    <div class="form-text">
+      After choosing vehicle and period, this list is filtered to show only compatible
+      and available slots.
+    </div>
+  </div>
+
+  {% if price %}
+  <div class="mb-3">
+    <div class="alert alert-info mb-0">
+      <strong>Price preview:</strong> {{ price }} €
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="mb-3">
+    <button type="submit" name="action" value="preview" class="btn btn-primary">
+      Show price
+    </button>
+
+    <button type="submit" name="action" value="confirm" class="btn btn-success"
+            {% if not preview_mode %}disabled{% endif %}>
+      Confirm purchase
+    </button>
+  </div>
+
+  <hr>
+
+  <div class="mb-3">
+    <label class="form-label">Cancel order</label>
+    <textarea name="cancel_reason" class="form-control"
+              placeholder="If you cancel, please tell us why."></textarea>
+    <button type="submit" name="action" value="cancel" class="btn btn-outline-secondary mt-2">
+      Cancel
+    </button>
+  </div>
+</form>
+{% endblock %}

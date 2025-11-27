@@ -1,0 +1,46 @@
+{% extends "core/base.html" %}
+{% block title %}Register Vehicle{% endblock %}
+{% block content %}
+<h2>Register Vehicle</h2>
+
+{% if errors %}
+  <div class="alert alert-danger">
+    <ul class="mb-0">
+      {% for e in errors %}<li>{{ e }}</li>{% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+<form method="post" class="mt-3">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label class="form-label">License plate</label>
+    <input type="text" name="license_plate" class="form-control"
+           value="{{ form_data.license_plate|default_if_none:'' }}">
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Minimum slot type</label>
+    <select name="minimum_slot_type" class="form-select">
+      <option value="">-- no restriction --</option>
+      {% for st in slot_types %}
+      <option value="{{ st.id }}"
+        {% if form_data.minimum_slot_type == st.id|stringformat:'s' %}selected{% endif %}>
+        {{ st.code }} - {{ st.name }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" name="has_disability_permit" id="id_has_disability"
+           {% if form_data.has_disability_permit %}checked{% endif %}>
+    <label class="form-check-label" for="id_has_disability">
+      Vehicle has disability permit
+    </label>
+  </div>
+
+  <button type="submit" class="btn btn-success">Save</button>
+  <a href="{% url 'vehicles:vehicle_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

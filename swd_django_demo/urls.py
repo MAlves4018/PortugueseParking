@@ -24,6 +24,9 @@ urlpatterns = [
     path("", include("core.urls")),
     # Map the "admin/" URL to the Django admin site
     path("admin/", admin.site.urls),
+    path("accounts/", include("customers.urls")),
+    path("vehicles/", include("vehicles.urls")),
+    path("tickets/", include("contracts.urls")),
 ]
 
 # Serve static files in development

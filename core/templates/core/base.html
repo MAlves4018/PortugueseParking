@@ -1,34 +1,52 @@
 {% load static %}
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{% block title %}SWD Demo Products{% endblock %}</title>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Portuguese Parking{% endblock %}</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'core:home' %}">PortugueseParking</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="{% url 'vehicles:vehicle_list' %}">My Vehicles</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'contracts:season_ticket_new' %}">Buy Season Ticket</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'contracts:season_ticket_list' %}">My Season Tickets</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'contracts:gate_entry' %}">Gate</a></li>
+      </ul>
+      <ul class="navbar-nav">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <span class="navbar-text me-2">Hello, {{ user.username }}!</span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'customers:logout' %}">Logout</a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'customers:login' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'customers:register' %}">Register</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16x16.png' %}">
+<div class="container">
+  {% block content %}{% endblock %}
+</div>
 
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'css/bootstrap-icons.min.css' %}" rel="stylesheet">
-    <link href="{% static 'css/application.css' %}" rel="stylesheet">
-  </head>
-  <body>
-    <main>
-
-      <!-- content goes here -->
-      <div class="content">
-        {% block content %}
-        {% endblock %}
-      </div>
-      <!-- end of content block -->
-
-      <script src="{% static 'js/popper.min.js' %}"></script>  
-      <script src="{% static 'js/bootstrap.min.js' %}"></script>  
-      
-    </main>
-  </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 class ParkingArea(models.Model):
     """
@@ -104,7 +105,7 @@ class Gate(models.Model):
     Represents a physical entry or exit gate in a parking area.
     """
 
-    id = models.UUIDField(primary_key=True, editable=False)
+    id = models.UUIDField(primary_key=True,default=uuid.uuid4, editable=False)
     area = models.ForeignKey(
         ParkingArea,
         on_delete=models.CASCADE,
