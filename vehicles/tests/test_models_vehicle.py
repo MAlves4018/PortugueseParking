@@ -87,7 +87,6 @@ class VehicleModelTests(TestCase):
         future_from = now + timedelta(days=3)
         future_to = now + timedelta(days=5)
 
-        # contrato já terminado
         Contract.objects.create(
             vehicle=v,
             valid_from=past_from,
@@ -95,7 +94,6 @@ class VehicleModelTests(TestCase):
             reserved_slot=self.slot_simple,
         )
 
-        # contrato futuro
         Contract.objects.create(
             vehicle=v,
             valid_from=future_from,
@@ -103,7 +101,6 @@ class VehicleModelTests(TestCase):
             reserved_slot=self.slot_simple,
         )
 
-        # contrato ativo
         active = Contract.objects.create(
             vehicle=v,
             valid_from=now - timedelta(days=1),

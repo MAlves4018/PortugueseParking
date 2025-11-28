@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+{% block title %}Parking statistics{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Parking statistics</h1>
+
+  <h3 class="mt-4">Current occupancy</h3>
+  <ul>
+    <li>Total slots: {{ occupancy.total_slots }}</li>
+    <li>Occupied slots: {{ occupancy.occupied_slots }}</li>
+    <li>Occupancy ratio: {{ occupancy.occupancy_ratio|floatformat:2 }}</li>
+  </ul>
+
+  <h3 class="mt-4">Last 24h usage</h3>
+  <ul>
+    <li>Total movements: {{ summary.total_movements }}</li>
+    <li>Total parked minutes: {{ summary.total_parked_minutes }}</li>
+  </ul>
+</div>
+{% endblock %}

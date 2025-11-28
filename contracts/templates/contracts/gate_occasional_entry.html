@@ -1,6 +1,6 @@
 {% extends "core/base.html" %}
 {% load static %}
-{% block title %}Gate Entry{% endblock %}
+{% block title %}Occasional Entry{% endblock %}
 
 {% block content %}
 <style>
@@ -52,6 +52,7 @@
       margin-bottom: 30px;
       color: #fff;
     }
+
     .form-control, .form-select, .form-check-input, textarea {
       background: rgba(0, 0, 0, 0.4) !important;
       border: 1px solid rgba(255, 255, 255, 0.3) !important;
@@ -108,13 +109,13 @@
     <div class="wrapper">
         <div class="form-box gate-simulate">
 
-            <h2>Simulate Gate Entry (UC2)</h2>
+            <h2>Simulate Occasional Gate Entry</h2>
 
             <div class="btn-group mb-4 w-100" role="group">
-              <a href="{% url 'contracts:gate_entry' %}" class="btn btn-primary">
+              <a href="{% url 'contracts:gate_occasional_entry' %}" class="btn btn-primary">
                 Entry
               </a>
-              <a href="{% url 'contracts:gate_exit' %}" class="btn btn-outline-primary">
+              <a href="{% url 'contracts:gate_occasional_exit' %}" class="btn btn-outline-primary">
                 Exit
               </a>
             </div>
@@ -136,17 +137,18 @@
                 </select>
               </div>
 
-              <button type="submit" class="btn btn-primary mt-4">Simulate entry</button>
+              <button type="submit" class="btn btn-primary mt-4">Issue ticket &amp; enter</button>
             </form>
 
-            {% if result is not None %}
+            {% if result %}
               {% if result.success %}
                 <div class="alert alert-success mt-3">
-                  Gate opened. {{ result.reason }}
+                  {{ result.reason }}<br>
+                  Assigned slot: {{ result.slot_label }}
                 </div>
               {% else %}
                 <div class="alert alert-danger mt-3">
-                  Gate closed. {{ result.reason }}
+                  {{ result.reason }}
                 </div>
               {% endif %}
             {% endif %}

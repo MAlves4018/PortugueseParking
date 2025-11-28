@@ -107,7 +107,15 @@ class PricingService(AbstractPricingService):
         amount = (hours * rate_per_hour).quantize(Decimal("0.01"))
 
         return float(amount)
-
+    
+    def get_single_use_price(self, slot_type, duration) -> Decimal:
+        """
+        Very simple pricing: round up to full hours, multiply by slot_type.hourly_rate.
+        """
+        from decimal import Decimal
+        seconds = duration.total_seconds()
+        hours = int((seconds + 3599) // 3600)  # round up
+        return Decimal(hours) * slot_type.hourly_rate
 
 class PaymentService(AbstractPaymentService):
     """
@@ -126,84 +134,6 @@ class PaymentService(AbstractPaymentService):
         unit tests to mock different payment outcomes.
         """
         return True
-
-class PricingService(AbstractPricingService):
-    """
-    Concrete pricing service implementation.
-
-    This service is responsible for calculating prices for:
-    - season tickets (UC1 – purchase a season ticket)
-    - occasional parking (used by occasional contracts / tickets)
-
-    The pricing rules depend on:
-    - the slot type (SIMPLE, EXTENDED, OVERSIZE)
-    - whether the slot is accessible (for EXTENDED)
-    """
-
-    SEASON_PRICES = {
-        "SIMPLE": Decimal("100.00"),
-        "EXTENDED": Decimal("130.00"),
-        "OVERSIZE": Decimal("160.00"),
-    }
-
-    OCCASIONAL_PRICES_PER_HOUR = {
-        "SIMPLE": Decimal("3.00"),
-        "EXTENDED": Decimal("4.50"),
-        "OVERSIZE": Decimal("6.00"),
-    }
-
-    def __init__(self, slot_repo=None):
-        self._slot_repo = slot_repo or ParkingSlot.objects
-
-    def _get_slot(self, slot_id: int) -> ParkingSlot:
-        return self._slot_repo.get(pk=slot_id)
-
-    def _get_pricing_category(self, slot: ParkingSlot) -> str:
-        code = slot.slot_type.code.upper()
-
-        if code == "EXTENDED" and slot.is_accessible:
-            return "SIMPLE"
-
-        if code in {"SIMPLE", "EXTENDED", "OVERSIZE"}:
-            return code
-
-        return "SIMPLE"
-
-    def get_season_price(self, slot_id, period):
-        slot = self._get_slot(slot_id)
-        category = self._get_pricing_category(slot)
-        base_price = self.SEASON_PRICES[category]
-        return float(base_price)
-
-    def get_occasional_price(self, slot_id, duration_minutes: int):
-        slot = self._get_slot(slot_id)
-        category = self._get_pricing_category(slot)
-        rate_per_hour = self.OCCASIONAL_PRICES_PER_HOUR[category]
-
-        hours = Decimal(duration_minutes) / Decimal(60)
-        amount = (hours * rate_per_hour).quantize(Decimal("0.01"))
-
-        return float(amount)
-
-
-class PaymentService(AbstractPaymentService):
-    """
-    Dummy payment service implementation.
-
-    According to the project scope, we do not integrate with a real
-    payment provider. For now every payment is considered successful.
-    """
-
-    def process_payment(self, customer_id, amount):
-        """
-        Process a payment for a given customer and amount.
-
-        In this lab implementation, the payment is always successful.
-        The method is kept to respect the service interface and to allow
-        unit tests to mock different payment outcomes.
-        """
-        return True
-
 
 class SlotService:
     """

@@ -27,6 +27,7 @@ urlpatterns = [
     path("accounts/", include("customers.urls")),
     path("vehicles/", include("vehicles.urls")),
     path("tickets/", include("contracts.urls")),
+    path("parking/", include(("parking.urls", "parking"), namespace="parking")),
 ]
 
 # Serve static files in development

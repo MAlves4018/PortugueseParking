@@ -17,7 +17,6 @@ class VehicleModelTests(TestCase):
     """
 
     def setUp(self):
-        # Minimal customer; adjust fields if your Customer model requires more.
         self.customer = Customer.objects.create(
             username="john.doe",
             first_name="John",

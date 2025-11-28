@@ -1,6 +1,6 @@
 {% extends "core/base.html" %}
 {% load static %}
-{% block title %}Gate Entry{% endblock %}
+{% block title %}Occasional Exit{% endblock %}
 
 {% block content %}
 <style>
@@ -16,6 +16,7 @@
         padding: 0;
         background-color: #121212;
     }
+
     .full-page-center {
         display: flex;
         flex-direction: column;
@@ -26,6 +27,7 @@
         margin: 0 auto;
         padding: 0;
     }
+
     .wrapper {
       position: relative;
       width: 450px;
@@ -52,6 +54,7 @@
       margin-bottom: 30px;
       color: #fff;
     }
+
     .form-control, .form-select, .form-check-input, textarea {
       background: rgba(0, 0, 0, 0.4) !important;
       border: 1px solid rgba(255, 255, 255, 0.3) !important;
@@ -85,6 +88,7 @@
     .btn-outline-primary {
         color: #007bff !important;
         border-color: #007bff !important;
+        background-color: transparent !important;
     }
 
     .alert-success {
@@ -108,13 +112,13 @@
     <div class="wrapper">
         <div class="form-box gate-simulate">
 
-            <h2>Simulate Gate Entry (UC2)</h2>
+            <h2>Simulate Occasional Gate Exit</h2>
 
             <div class="btn-group mb-4 w-100" role="group">
-              <a href="{% url 'contracts:gate_entry' %}" class="btn btn-primary">
+              <a href="{% url 'contracts:gate_occasional_entry' %}" class="btn btn-outline-primary">
                 Entry
               </a>
-              <a href="{% url 'contracts:gate_exit' %}" class="btn btn-outline-primary">
+              <a href="{% url 'contracts:gate_occasional_exit' %}" class="btn btn-primary">
                 Exit
               </a>
             </div>
@@ -136,10 +140,10 @@
                 </select>
               </div>
 
-              <button type="submit" class="btn btn-primary mt-4">Simulate entry</button>
+              <button type="submit" class="btn btn-primary mt-4">Simulate exit</button>
             </form>
 
-            {% if result is not None %}
+            {% if result %}
               {% if result.success %}
                 <div class="alert alert-success mt-3">
                   Gate opened. {{ result.reason }}

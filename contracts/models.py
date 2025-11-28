@@ -172,3 +172,47 @@ class Ticket(models.Model):
         Returns whether the ticket is currently active.
         """
         return self.deactivated_at is None
+
+class OccasionalTicket(models.Model):
+    """
+    Represents a single-use (occasional) parking ticket.
+
+    - anonymous (no customer FK)
+    - bound to a license plate and a slot
+    - one entry + one exit
+    - billing is per usage (duration * slot type price)
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    license_plate = models.CharField(max_length=20, db_index=True)
+    slot = models.ForeignKey(ParkingSlot, on_delete=models.PROTECT, related_name="occasional_tickets")
+
+    entry_time = models.DateTimeField()
+    exit_time = models.DateTimeField(null=True, blank=True)
+
+    # billing info
+    amount_due = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    paid_at = models.DateTimeField(null=True, blank=True)
+
+    # grace period after payment (exit deadline)
+    exit_deadline = models.DateTimeField(null=True, blank=True)
+
+    # convenience flags
+    is_closed = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-entry_time"]
+
+    def __str__(self):
+        return f"OccasionalTicket {self.license_plate} @ {self.slot} ({self.entry_time})"
+
+    @property
+    def is_paid(self) -> bool:
+        return self.amount_paid >= self.amount_due and self.amount_due > 0
+
+    @property
+    def is_within_grace_period(self) -> bool:
+        if not self.exit_deadline:
+            return False
+        return timezone.now() <= self.exit_deadline

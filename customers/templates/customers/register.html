@@ -4,7 +4,6 @@
 
 {% block content %}
 <style>
-    /* 🚨 ESTILOS GLOBAIS DE BACKGROUND */
     body {
         font-family: sans-serif;
         margin: 0;
@@ -18,9 +17,8 @@
         background-color: #121212;
     }
 
-    /* 🚨 TEXTO DE AJUDA E ERROS (CORRIGIDO CONTRASTE) */
     .form-text.text-muted {
-        color: #FFFFFF !important; /* Mudar para branco puro */
+        color: #FFFFFF !important;
         font-weight: 500;
         font-size: 0.8em;
         display: block;
@@ -29,12 +27,11 @@
     }
 
     .text-danger {
-        color: #ff6666 !important; /* Vermelho claro/visível */
+        color: #ff6666 !important;
         font-weight: 600;
         padding-left: 5px;
     }
 
-    /* 🚨 CONTAINER DE CENTRAMENTO TOTAL ABAIXO DA NAVBAR */
     .full-page-center {
         display: flex;
         flex-direction: column;
@@ -46,7 +43,6 @@
         padding: 0;
     }
 
-    /* 🚨 LOGOTIPO */
     .logo-container {
       padding: 10px 30px;
       margin-bottom: 30px;
@@ -62,7 +58,6 @@
       display: block;
     }
 
-    /* 🚨 WRAPPER DA CAIXA DE VIDRO */
     .wrapper {
       position: relative;
       width: 600px;
@@ -89,7 +84,6 @@
       text-align: center;
     }
 
-    /* 🚨 NOVO: CONTAINER DE DUAS COLUNAS */
     .two-col-group {
         display: flex;
         justify-content: space-between;
@@ -97,8 +91,6 @@
         width: 100%;
     }
 
-
-    /* 🚨 INPUT BOX PRINCIPAL (Container que suporta help_text e erros) */
     .input-box {
       position: relative;
       width: 100%;
@@ -107,29 +99,28 @@
       margin: 15px 0;
     }
 
-    /* 🚨 WRAPPER DO CAMPO: Onde a borda e o input/label estão */
     .input-field-wrapper {
         position: relative;
         width: 100%;
-        height: 50px; /* Altura que o label flutuante usa */
+        height: 50px;
         border-bottom: 2px solid;
     }
 
     .input-box label {
       position: absolute;
-      top: 50%; /* Faz o label começar no centro */
+      top: 50%;
       left: 5px;
-      transform: translateY(-50%); /* Ajuste vertical */
+      transform: translateY(-50%);
       font-size: 1em;
       font-weight: 500;
       pointer-events: none;
       transition: .5s;
-      color: #f0f0f0; /* Garante que é branco */
+      color: #f0f0f0;
     }
 
     .input-box input:focus~label,
     .input-box input:valid~label {
-      top: -5px; /* Sobe para cima */
+      top: -5px;
     }
 
    .input-box input:not(:placeholder-shown):not(:focus)~label {
@@ -137,7 +128,6 @@
         transform: none;
     }
 
-    /* Input real gerado pelo Django */
     .input-box input {
           width: 100%;
           height: 100%;
@@ -150,7 +140,6 @@
           padding: 0 35px 0 5px;
         }
 
-    /* Ajuste para textarea (Morada) */
     .input-box textarea {
         width: 100%;
         min-height: 80px;
@@ -168,7 +157,7 @@
       position: absolute;
       right: 8px;
       line-height: 50px;
-      pointer-events: none; /* Manter isto para que o clique vá para o input por baixo */
+      pointer-events: none;
       z-index: 5;
     }
 

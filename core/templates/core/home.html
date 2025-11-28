@@ -7,100 +7,75 @@
 <style>
 
     body {
-        /* Assumindo que a imagem está em 'img/background.jpg' */
         background-image: url("{% static 'img/background.jpg' %}");
         background-size: cover;
         background-position: center;
-
-        /* 🚨 CORREÇÃO DO SCROLL: Fixa a imagem no ecrã */
         background-attachment: fixed;
-
-        /* Garantir que o fundo é sempre escuro por segurança */
         background-color: #121212 !important;
     }
-
-    /* 🚨 REVERTER .pp-home: Remover estilos de fundo para não cobrir a imagem */
     .pp-home {
         font-family: sans-serif;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-
-        /* Ocupa todo o espaço vertical visível (correto) */
         min-height: calc(100vh - 80px);
         width: 100%;
         margin: 0;
         padding: 20px 0;
 
-        /* 🚨 REVERSÃO: Garante que não tem cor de fundo sólida */
         background-color: transparent !important;
 
         color: #f0f0f0;
     }
-
-
-
-    /* 1. Logótipo no Centro e Maior */
     .pp-home .logo-img {
         max-width: 90%;
-        width: 650px; /* Definindo uma largura maior para destaque */
+        width: 650px;
         height: auto;
-        display: block; /* Espaço maior abaixo do logo */
+        display: block;
     }
-
-    /* 2. Grupo de Botões e Texto */
     .pp-home .button-group {
-        text-align: center; /* Garante que o texto e botões estão centrados */
+        text-align: center;
         max-width: 400px;
         width: 100%;
-        /* 🚨 NOVO: Adicionar uma camada escura semi-transparente para contraste */
         background: transparent;
-        padding: 25px; /* Espaçamento interno */
+        padding: 25px;
         border: 2px solid rgba(255, 255 ,255 ,.5);
         border-radius: 20px;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); /* Sombra subtil */
-        backdrop-filter: blur(20px); /* Manter o efeito de vidro */
-
-        /* 🚨 CORREÇÃO: Remover a margem de 50px de baixo do logo-container, já temos margin-bottom no logo-container */
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(20px);
         margin-top: 0;
     }
 
-    /* Texto de Informação */
     .pp-home .button-group p {
-        margin: 30px 0 30px; /* Mais espaço antes e depois do texto de registo */
-        color: #f0f0f0; /* Cor de texto mais suave */
+        margin: 30px 0 30px;
+        color: #f0f0f0;
         font-size: 1em;
         font-font: 500;
     }
 
-    /* Estilo Base para os Botões */
     .pp-home .button-group a {
-        padding: 15px 30px; /* Botões maiores e mais fáceis de clicar */
+        padding: 15px 30px;
         text-decoration: none;
         color: white;
-        border-radius: 8px; /* Cantos ligeiramente mais arredondados */
+        border-radius: 8px;
         transition: background-color 0.3s, transform 0.1s;
         font-weight: bold;
-        display: block; /* Ocupa a largura total da .button-group */
+        display: block;
         width: 100%;
         box-sizing: border-box;
         text-transform: uppercase;
     }
-
-    /* Estilos Específicos */
     .pp-home .login-btn {
-        background-color: #007bff; /* Azul primário */
-        margin-bottom: 15px; /* Espaço após o Login */
+        background-color: #007bff;
+        margin-bottom: 15px;
     }
     .pp-home .register-btn {
-        background-color: #28a745; /* Verde para Registo */
-        /* Margin será adicionada pelo <p> acima */
+        background-color: #28a745;
     }
 
-    /* Efeitos Hover */
     .pp-home .login-btn:hover, .pp-home .register-btn:hover {
-        transform: translateY(-2px); /* Efeito subtil ao passar o rato */
+        transform: translateY(-2px);
     }
     .pp-home .login-btn:hover {
         background-color: #0056b3;
@@ -110,11 +85,10 @@
     }
 
     .pp-home .logo-container{
-        padding: 10px 30px; <--- REDUZIR O PADDING LATERAL
+        padding: 10px 30px;
         padding: 10px 20px;
         margin-bottom: 130px;
 
-         🚨 ALTERAÇÃO: Fundo mais escuro para contraste
         background: transparent;
         border: 2px solid rgba(255, 255 ,255 ,.5);
         border-radius: 20px;
@@ -143,6 +117,12 @@
             <p>You are logged in. You can manage your vehicles and buy season tickets.</p>
 
             <a href="{% url 'contracts:season_ticket_new' %}" class="register-btn">Buy Season Ticket</a>
+
+            {% if user.is_staff %}
+                <a href="{% url 'parking:stats_overview' %}" class="stats-btn">
+                    View Parking Statistics
+                </a>
+            {% endif %}
         {% else %}
             <a href="{% url 'customers:login' %}" class="login-btn">Login</a>
 

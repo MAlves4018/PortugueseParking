@@ -1,5 +1,5 @@
 from django.contrib import admin
-
+from .models import OccasionalTicket
 from .models import (
     Payment,
     RegularContract,
@@ -62,3 +62,8 @@ class TicketAdmin(admin.ModelAdmin):
     list_display = ("id", "contract", "issued_at", "deactivated_at")
     list_filter = ("issued_at",)
     search_fields = ("id",)
+
+@admin.register(OccasionalTicket)
+class OccasionalTicketAdmin(admin.ModelAdmin):
+    list_display = ("license_plate", "slot", "entry_time", "exit_time", "amount_due", "amount_paid")
+    search_fields = ("license_plate",)

@@ -9,5 +9,4 @@ class CustomerManager(UserManager):
     create_user() e create_superuser() funcionam corretamente.
     Não importa o modelo Customer para evitar imports circulares.
     """
-    # Aqui podes adicionar métodos específicos de Customer se quiseres.
     pass

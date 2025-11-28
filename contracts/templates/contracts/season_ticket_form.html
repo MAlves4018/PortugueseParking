@@ -4,7 +4,6 @@
 
 {% block content %}
 <style>
-    /* 🚨 ESTILOS GLOBAIS DE BACKGROUND (Fundo Fixo) */
     body {
         font-family: sans-serif;
         margin: 0;
@@ -18,7 +17,6 @@
         background-color: #121212;
     }
 
-    /* 🚨 CONTAINER DE CENTRAMENTO TOTAL ABAIXO DA NAVBAR */
     .full-page-center {
         display: flex;
         flex-direction: column;
@@ -30,12 +28,11 @@
         padding: 0;
     }
 
-    /* 🚨 WRAPPER DA CAIXA DE VIDRO (AJUSTADO PARA O FORMULÁRIO DE COMPRA) */
     .wrapper {
       position: relative;
       width: 600px;
       height: auto;
-      min-height: 700px; /* Altura mínima para o formulário longo */
+      min-height: 700px;
       background: transparent;
       border: 2px solid rgba(255, 255 ,255 ,.5);
       border-radius: 20px;
@@ -46,7 +43,7 @@
       align-items: center;
       padding: 20px 0;
       margin-top: 50px;
-      margin-bottom: 50px; /* Margem extra para evitar que o formulário comprido cole na parte inferior */
+      margin-bottom: 50px;
     }
 
     .wrapper .form-box {
@@ -60,14 +57,12 @@
       margin-bottom: 30px;
     }
 
-    /* 🚨 ESTILOS DOS INPUTS, SELECTS E TEXTAREAS */
     .form-control, .form-select, .form-check-input, textarea {
-      /* Estilos para todos os inputs, selects e textareas do Bootstrap */
       background: rgba(0, 0, 0, 0.4) !important;
       border: 1px solid rgba(255, 255, 255, 0.3) !important;
       color: #f0f0f0 !important;
       transition: all 0.3s;
-      box-sizing: border-box; /* Essencial para layout */
+      box-sizing: border-box;
     }
 
     .form-control:focus, .form-select:focus, textarea:focus {
@@ -77,7 +72,6 @@
         color: #f0f0f0 !important;
     }
 
-    /* 🚨 ESTILO DOS LABELS E TEXTO DE AJUDA */
     .form-label, .form-text {
         color: #f0f0f0 !important;
         font-weight: 500;
@@ -87,7 +81,6 @@
         margin-top: 5px;
     }
 
-    /* 🚨 ESTILOS DOS BOTÕES */
     .btn {
       padding: 10px 20px;
       border-radius: 6px;
@@ -108,7 +101,6 @@
         background-color: transparent !important;
     }
 
-    /* 🚨 ALERT BOX CUSTOMIZADA (PARA O PREÇO) */
     .alert-info {
         background-color: rgba(0, 123, 255, 0.2) !important;
         border-color: #007bff !important;

@@ -1,6 +1,6 @@
 {% extends "core/base.html" %}
 {% load static %}
-{% block title %}Gate Entry{% endblock %}
+{% block title %}Occasional Payment{% endblock %}
 
 {% block content %}
 <style>
@@ -16,6 +16,7 @@
         padding: 0;
         background-color: #121212;
     }
+
     .full-page-center {
         display: flex;
         flex-direction: column;
@@ -26,11 +27,11 @@
         margin: 0 auto;
         padding: 0;
     }
+
     .wrapper {
       position: relative;
-      width: 450px;
+      width: 500px;
       height: auto;
-      min-height: 400px;
       background: transparent;
       border: 2px solid rgba(255, 255 ,255 ,.5);
       border-radius: 20px;
@@ -52,22 +53,22 @@
       margin-bottom: 30px;
       color: #fff;
     }
-    .form-control, .form-select, .form-check-input, textarea {
+
+    .form-control {
       background: rgba(0, 0, 0, 0.4) !important;
       border: 1px solid rgba(255, 255, 255, 0.3) !important;
       color: #f0f0f0 !important;
       transition: all 0.3s;
-      box-sizing: border-box;
     }
 
-    .form-control:focus, .form-select:focus, textarea:focus {
+    .form-control:focus {
         background: rgba(0, 0, 0, 0.6) !important;
         border-color: #007bff !important;
         box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25) !important;
         color: #f0f0f0 !important;
     }
 
-    .form-label, .form-text {
+    .form-label {
         color: #f0f0f0 !important;
         font-weight: 500;
     }
@@ -78,15 +79,23 @@
       font-weight: 600;
       cursor: pointer;
     }
+
+    .btn-secondary {
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+        color: white !important;
+    }
+
     .btn-primary {
         background-color: #007bff !important;
         border-color: #007bff !important;
     }
-    .btn-outline-primary {
-        color: #007bff !important;
-        border-color: #007bff !important;
-    }
 
+    .alert-info {
+        background-color: rgba(0, 123, 255, 0.15) !important;
+        border-color: #0dcaf0 !important;
+        color: #0dcaf0 !important;
+    }
     .alert-success {
         background-color: rgba(40, 167, 69, 0.2) !important;
         border-color: #28a745 !important;
@@ -98,55 +107,57 @@
         color: #dc3545 !important;
     }
 
-    .btn-group .btn {
-        margin: 0 5px;
-    }
-
 </style>
 
 <div class="full-page-center">
     <div class="wrapper">
         <div class="form-box gate-simulate">
 
-            <h2>Simulate Gate Entry (UC2)</h2>
+            <h2>Occasional Ticket Payment<br>(Cash Device)</h2>
 
-            <div class="btn-group mb-4 w-100" role="group">
-              <a href="{% url 'contracts:gate_entry' %}" class="btn btn-primary">
-                Entry
-              </a>
-              <a href="{% url 'contracts:gate_exit' %}" class="btn btn-outline-primary">
-                Exit
-              </a>
-            </div>
-
-            <form method="post" class="mt-3">
+            <form method="post" class="mb-3">
               {% csrf_token %}
 
               <div class="mb-3">
                 <label class="form-label">License plate</label>
-                <input type="text" name="license_plate" class="form-control">
+                <input type="text" name="license_plate" class="form-control"
+                       value="{{ request.POST.license_plate }}">
               </div>
 
-              <div class="mb-3">
-                <label class="form-label">Gate</label>
-                <select name="gate_id" class="form-select">
-                  {% for g in gates %}
-                  <option value="{{ g.id }}">{{ g.area.name }} / {{ g.name }}</option>
-                  {% endfor %}
-                </select>
+              <div class="d-flex gap-3 mt-3">
+                <button type="submit" name="action" value="calculate" class="btn btn-secondary w-50">
+                  Calculate price
+                </button>
+                <button type="submit" name="action" value="pay" class="btn btn-primary w-50">
+                  Pay now
+                </button>
               </div>
 
-              <button type="submit" class="btn btn-primary mt-4">Simulate entry</button>
             </form>
 
-            {% if result is not None %}
-              {% if result.success %}
-                <div class="alert alert-success mt-3">
-                  Gate opened. {{ result.reason }}
+            {% if pricing %}
+              {% if pricing.success %}
+                <div class="alert alert-info mt-3">
+                  Duration: {{ pricing.duration_minutes }} minutes<br>
+                  Amount due: {{ pricing.amount }} €
                 </div>
               {% else %}
                 <div class="alert alert-danger mt-3">
-                  Gate closed. {{ result.reason }}
+                  {{ pricing.reason }}
+                </div>
+              {% endif %}
+            {% endif %}
+
+            {% if payment_result %}
+              {% if payment_result.success %}
+                <div class="alert alert-success mt-3">
+                  {{ payment_result.reason }}<br>
+                  Paid: {{ payment_result.amount }} €<br>
+                  Exit deadline: {{ payment_result.deadline }}
+                </div>
+              {% else %}
+                <div class="alert alert-danger mt-3">
+                  {{ payment_result.reason }}
                 </div>
               {% endif %}
             {% endif %}

@@ -41,11 +41,8 @@ class SlotTypeModelTests(TestCase):
             size_rank=3,
         )
 
-        # Extended pode receber Simple
         self.assertTrue(t_extended.can_host(t_simple))
-        # Simple não pode receber Extended
         self.assertFalse(t_simple.can_host(t_extended))
-        # Oversize pode receber qualquer um
         self.assertTrue(t_oversize.can_host(t_simple))
         self.assertTrue(t_oversize.can_host(t_extended))
 
@@ -128,27 +125,21 @@ class ParkingSlotModelTests(TestCase):
 
         self.assertFalse(self.slot_simple.is_free_for_period(period))
 
-        # período completamente antes do contrato → livre
         before_period = (now - timedelta(hours=3), now - timedelta(hours=2))
         self.assertTrue(self.slot_simple.is_free_for_period(before_period))
 
-        # período completamente depois do contrato → livre
         after_period = (now + timedelta(hours=2), now + timedelta(hours=3))
         self.assertTrue(self.slot_simple.is_free_for_period(after_period))
 
     def test_is_compatible_with_size_and_accessibility_rules(self):
-        # veículo simples pode usar slot simples não acessível
         self.assertTrue(self.slot_simple.is_compatible_with(self.vehicle_simple))
 
-        # veículo extended não pode usar slot simples (size_rank insuficiente)
         self.assertFalse(self.slot_simple.is_compatible_with(self.vehicle_extended))
 
-        # slot acessível + veículo sem disability_permit → não pode
         self.assertFalse(
             self.slot_extended_accessible.is_compatible_with(self.vehicle_extended)
         )
 
-        # slot acessível + veículo COM disability_permit → pode
         self.assertTrue(
             self.slot_extended_accessible.is_compatible_with(
                 self.vehicle_with_permit

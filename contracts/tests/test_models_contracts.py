@@ -38,7 +38,6 @@ class PaymentModelTests(TestCase):
 
 class ContractModelTests(TestCase):
     def setUp(self):
-        # Customer + Vehicle + ParkingSlot mínimos para construir um Contract
         self.customer = Customer.objects.create_user(
             username="john",
             password="dummy",
@@ -92,11 +91,9 @@ class ContractModelTests(TestCase):
         self.assertFalse(self.contract.is_active(at))
 
     def test_has_open_movement_and_get_active_movement(self):
-        # Sem movimentos → nada aberto
         self.assertFalse(self.contract.has_open_movement())
         self.assertIsNone(self.contract.get_active_movement())
 
-        # Movimento fechado
         Movement.objects.create(
             contract=self.contract,
             entry_time=timezone.now() - timedelta(hours=2),
@@ -105,7 +102,6 @@ class ContractModelTests(TestCase):
         self.assertFalse(self.contract.has_open_movement())
         self.assertIsNone(self.contract.get_active_movement())
 
-        # Movimento aberto
         open_movement = Movement.objects.create(
             contract=self.contract,
             entry_time=timezone.now() - timedelta(minutes=30),

@@ -7,9 +7,6 @@
             font-family: sans-serif;
             margin: 0;
 
-            /* Remover: display: flex; align-items: center; min-height: 100vh; */
-
-            /* Estilos de Fundo */
             background-image: url("{% static 'img/background.jpg' %}");
             background-repeat: no-repeat;
             background-size: cover;
@@ -17,38 +14,35 @@
             background-attachment: fixed;
 
             color: #f0f0f0;
-            padding: 0; /* Remover padding para não interferir com o layout do base.html */
+            padding: 0;
         }
 
         .full-page-center {
             display: flex;
             flex-direction: column;
-            align-items: center; /* Centra horizontalmente */
-            justify-content: center; /* Centra verticalmente */
+            align-items: center;
+            justify-content: center;
 
-            /* Ocupa o espaço visível (abaixo da navbar) */
-            min-height: calc(100vh - 56px); /* 56px é a altura típica de uma navbar Bootstrap */
+            min-height: calc(100vh - 56px);
             width: 100%;
             margin: 0 auto;
             padding: 0;
         }
 
         .logo-container {
-          padding: 10px 30px; /* Espaçamento interno */
-          margin-bottom: 30px; /* Espaço entre o logo e a caixa de login */
+          padding: 10px 30px;
+          margin-bottom: 30px;
           background: rgba(255, 255, 255, 0.1);
           backdrop-filter: blur(5px);
           border-radius: 10px;
-          /* Opcional: Borda fina para definição */
           border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* Ajuste o tamanho do logótipo para não ficar demasiado grande */
         .logo-img {
           max-width: 90%;
-          width: 350px; /* Reduzido de 650px para caber melhor na box e no ecrã */
+          width: 350px;
           height: auto;
-          display: block; /* Garante que a imagem se comporta bem */
+          display: block;
         }
 
         .wrapper {
@@ -183,8 +177,6 @@
 
         <form method="post" action="{% url 'customers:login' %}">
             {% csrf_token %}
-
-            {% comment %} Exibir erros gerais do formulário (aparece no topo da caixa) {% endcomment %}
             <div class="text-danger mb-3">{{ form.non_field_errors }}</div>
 
 

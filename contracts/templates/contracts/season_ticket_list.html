@@ -4,7 +4,6 @@
 
 {% block content %}
 <style>
-    /* 🚨 ESTILOS GLOBAIS DE BACKGROUND (Fundo Fixo) */
     body {
         font-family: sans-serif;
         margin: 0;
@@ -18,22 +17,19 @@
         background-color: #121212;
     }
 
-    /* 🚨 CONTAINER DE CENTRAMENTO TOTAL ABAIXO DA NAVBAR */
     .full-page-center {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: flex-start; /* Alinhar o conteúdo ao topo (melhor para listas longas) */
+        justify-content: flex-start;
         min-height: calc(100vh - 56px);
         width: 100%;
         margin: 0 auto;
-        padding: 20px 0; /* Padding no topo para listas */
+        padding: 20px 0;
     }
-
-    /* 🚨 WRAPPER DA CAIXA DE VIDRO (Geral) */
     .wrapper {
       position: relative;
-      width: 80%; /* Mais largo para acomodar a tabela */
+      width: 80%;
       height: auto;
       min-height: 400px;
       background: transparent;
@@ -57,25 +53,22 @@
       margin-bottom: 30px;
       color: #fff;
     }
-
-    /* 🚨 ESTILOS DA TABELA PARA FUNDO ESCURO */
     .table {
-        color: #f0f0f0; /* Texto da tabela branco */
+        color: #f0f0f0;
         background-color: transparent !important;
         margin-top: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.3); /* Borda visível */
+        border: 1px solid rgba(255, 255, 255, 0.3);
         width: 100%;
     }
     .table th {
-        border-bottom: 2px solid rgba(255, 255, 255, 0.5); /* Separador de cabeçalho */
+        border-bottom: 2px solid rgba(255, 255, 255, 0.5);
         color: #ddd;
     }
     .table-striped > tbody > tr:nth-of-type(odd) {
-        /* Fundo para linhas ímpares (melhor contraste) */
         background-color: rgba(255, 255, 255, 0.1) !important;
     }
     .table-striped > tbody > tr:hover {
-        background-color: rgba(255, 255, 255, 0.2) !important; /* Efeito hover */
+        background-color: rgba(255, 255, 255, 0.2) !important;
     }
     .table td, .table th {
         border-color: rgba(255, 255, 255, 0.1);

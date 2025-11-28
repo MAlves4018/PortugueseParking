@@ -16,18 +16,15 @@ class TicketServiceTests(TestCase):
     """
 
     def setUp(self):
-        # Mock collaborators
         self.pricing_service = MagicMock()
         self.payment_service = MagicMock()
 
-        # Mock repositories as simple MagicMocks
         self.slot_repo = MagicMock()
         self.vehicle_repo = MagicMock()
         self.contract_repo = MagicMock()
         self.movement_repo = MagicMock()
         self.gate_repo = MagicMock()
 
-        # Create service with mocked dependencies
         self.service: ITicketService = TicketService(
             pricing_service=self.pricing_service,
             payment_service=self.payment_service,
