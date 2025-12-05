@@ -17,11 +17,14 @@ logger = logging.getLogger(__name__)
 
 def _get_available_slots_for(vehicle, valid_from, valid_to):
     """
-    Devolve a lista de ParkingSlot disponíveis para este veículo e período:
-    - sem contratos que se sobreponham no tempo
-    - compatíveis com o tipo de veículo (mínimo slot type)
-    - respeitando acessibilidade (carros com disability só veem slots acessíveis;
-      carros sem disability não veem slots acessíveis).
+    Returns the list of ParkingSlot objects that are available for this
+    vehicle and time period:
+
+    - without overlapping regular contracts
+    - compatible with the vehicle’s required slot type (minimum slot type)
+    - respecting accessibility rules:
+        * vehicles with a disability permit only see accessible slots
+        * vehicles without a disability permit do not see accessible slots
     """
     overlapping_contracts = RegularContract.objects.filter(
         reserved_slot=OuterRef("pk"),

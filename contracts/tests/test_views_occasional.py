@@ -7,11 +7,11 @@ from django.urls import reverse
 
 class OccasionalTicketViewsTests(TestCase):
     """
-    UI-level tests para os casos de uso com bilhetes ocasionais (UC3).
+    UI-level tests for the occasional ticket use cases (UC3).
 
-    - Entrada ocasional
-    - Saída ocasional
-    - Pagamento no cash device (calculate / pay)
+    - Occasional entry
+    - Occasional exit
+    - Cash device payment flow (calculate / pay)
     """
 
     def setUp(self) -> None:
@@ -25,17 +25,17 @@ class OccasionalTicketViewsTests(TestCase):
 
     def test_occasional_entry_get_renders_page(self):
         """
-        Smoke test: a página de entrada ocasional deve carregar.
+        Smoke test: the occasional entry page should load successfully.
         """
         url = reverse("contracts:gate_occasional_entry")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        # Texto genérico do header, para não depender do tipo de travessão.
+        # Generic header text check to avoid depending on punctuation variants.
         self.assertContains(response, "Occasional", status_code=200)
 
     def test_occasional_exit_get_renders_page(self):
         """
-        Smoke test: a página de saída ocasional deve carregar.
+        Smoke test: the occasional entry page should load successfully.
         """
         url = reverse("contracts:gate_occasional_exit")
         response = self.client.get(url)
@@ -48,12 +48,12 @@ class OccasionalTicketViewsTests(TestCase):
         mock_build_service,
     ):
         """
-        UC3 – Cash device, ação "Calculate price".
+        UC3 – Cash device, action "Calculate price".
 
-        A view deve:
-        - construir o serviço via _build_ticket_service()
-        - chamar service.get_occasional_pricing(plate)
-        - mostrar o montante a pagar.
+        The view must:
+        - construct the service via _build_ticket_service()
+        - call service.get_occasional_pricing(plate)
+        - display the amount to be paid.
         """
         fake_pricing = {
             "success": True,
@@ -76,10 +76,8 @@ class OccasionalTicketViewsTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        # O serviço deve ter sido chamado com a matrícula correta
         mock_service.get_occasional_pricing.assert_called_once_with("OC-11-22")
 
-        # O template mostra algo como "Amount due: X €"
         self.assertContains(response, "Amount due")
 
     @patch("contracts.views._build_ticket_service")
@@ -88,12 +86,12 @@ class OccasionalTicketViewsTests(TestCase):
         mock_build_service,
     ):
         """
-        UC3 – Cash device, ação "Pay now".
+        UC3 – Cash device, action "Pay now".
 
-        A view deve:
-        - construir o serviço via _build_ticket_service()
-        - chamar service.pay_occasional_ticket(plate)
-        - mostrar uma mensagem de sucesso e o valor pago.
+        The view must:
+        - construct the service using _build_ticket_service()
+        - call service.pay_occasional_ticket(plate)
+        - display a success message and the paid amount.
         """
         fake_payment_result = {
             "success": True,
@@ -118,6 +116,5 @@ class OccasionalTicketViewsTests(TestCase):
 
         mock_service.pay_occasional_ticket.assert_called_once_with("OC-11-22")
 
-        # O template mostra "Paid: <amount> €" e a razão
         self.assertContains(response, "Paid:")
         self.assertContains(response, "Payment successful.")

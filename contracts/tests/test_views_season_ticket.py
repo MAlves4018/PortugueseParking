@@ -7,10 +7,10 @@ from django.urls import reverse
 
 class SeasonTicketViewsTests(TestCase):
     """
-    UI-level tests para os casos de uso com season ticket.
+    UI-level tests for the season ticket use cases.
 
-    - UC1: compra de season ticket (view 'season_ticket_new')
-    - UC2: gate entry / gate exit com season ticket
+    - UC1: purchase of a season ticket (view 'season_ticket_new')
+    - UC2: gate entry / gate exit using a season ticket
     """
 
     def setUp(self) -> None:
@@ -20,7 +20,7 @@ class SeasonTicketViewsTests(TestCase):
             password="secret",
             email="test@example.com",
         )
-        # Autenticar o utilizador para passar o @login_required nas views.
+        # Authenticate the user to pass the @login_required decorators in the views.
         self.client.login(username="testuser", password="secret")
 
     @patch("contracts.views._build_ticket_service")
@@ -35,12 +35,11 @@ class SeasonTicketViewsTests(TestCase):
         """
         UC1 – Purchase season ticket.
 
-        A view deve:
-        - construir o serviço via _build_ticket_service()
-        - chamar service.purchase_season_ticket(...)
-        - redirecionar para a lista de season tickets em caso de sucesso.
+        The view must:
+        - construct the service using _build_ticket_service()
+        - call service.purchase_season_ticket(...)
+        - redirect to the season ticket list on success.
         """
-        # --- Arrange serviço ---
         mock_service = MagicMock()
         mock_service.purchase_season_ticket.return_value = {
             "success": True,
@@ -48,21 +47,17 @@ class SeasonTicketViewsTests(TestCase):
         }
         mock_build_service.return_value = mock_service
 
-        # --- Arrange Vehicle + slots (mock do modelo = isolar UI) ---
         fake_vehicle = MagicMock()
         fake_vehicle.license_plate = "AA-00-BB"
 
-        # qualquer get(...) devolve o mesmo veículo falso
         mock_vehicle_cls.objects.get.return_value = fake_vehicle
 
-        # _get_available_slots_for devolve um slot com id "10"
         fake_slot = MagicMock()
         fake_slot.id = "10"
         mock_get_slots.return_value = [fake_slot]
 
         url = reverse("contracts:season_ticket_new")
 
-        # Campos alinhados com os nomes esperados pela view:
         # vehicle_id, slot_id, valid_from, valid_to, action="confirm"
         form_data = {
             "vehicle_id": "1",
@@ -76,13 +71,10 @@ class SeasonTicketViewsTests(TestCase):
         response = self.client.post(url, data=form_data)
 
         # --- Assert ---
-        # Deve ter chamado o builder para obter o serviço
         mock_build_service.assert_called_once()
 
-        # Deve ter chamado o método de negócio para comprar o season ticket
         mock_service.purchase_season_ticket.assert_called_once()
 
-        # Em caso de sucesso a view faz redirect para season_ticket_list
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response["Location"], reverse("contracts:season_ticket_list"))
 
@@ -92,12 +84,12 @@ class SeasonTicketViewsTests(TestCase):
         mock_build_service,
     ):
         """
-        UC2 – Gate entry com season ticket (happy path).
+        UC2 – Gate entry with a season ticket (happy path).
 
-        A view deve:
-        - construir o serviço via _build_ticket_service()
-        - chamar service.enter_with_season_ticket(...)
-        - mostrar a mensagem devolvida em 'reason'.
+        The view must:
+        - construct the service using _build_ticket_service()
+        - call service.enter_with_season_ticket(...)
+        - display the message returned in 'reason'.
         """
         mock_service = MagicMock()
         mock_service.enter_with_season_ticket.return_value = {
@@ -117,13 +109,11 @@ class SeasonTicketViewsTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        # O service deve ter sido chamado com a matrícula em upper-case e o gate_id
         mock_service.enter_with_season_ticket.assert_called_once_with(
             "11-AA-11",
             "123e4567-e89b-12d3-a456-426614174000",
         )
 
-        # O template deve apresentar a mensagem
         self.assertContains(response, "Gate opened for vehicle.")
 
     @patch("contracts.views._build_ticket_service")
@@ -132,12 +122,12 @@ class SeasonTicketViewsTests(TestCase):
         mock_build_service,
     ):
         """
-        UC2 – Gate exit com season ticket.
+        UC2 – Gate exit with a season ticket.
 
-        A view deve:
-        - construir o serviço via _build_ticket_service()
-        - chamar service.exit_with_season_ticket(...)
-        - mostrar a mensagem devolvida em 'reason'.
+        The view must:
+        - construct the service using _build_ticket_service()
+        - call service.exit_with_season_ticket(...)
+        - display the message returned in 'reason'.
         """
         mock_service = MagicMock()
         mock_service.exit_with_season_ticket.return_value = {

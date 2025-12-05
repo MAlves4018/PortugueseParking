@@ -10,7 +10,7 @@ from django.db.models import Exists, OuterRef
 from .models import RegularContract, OccasionalTicket
 from parking.models import ParkingSlot
 
-GRACE_PERIOD_MINUTES = 15  # para single-use tickets
+GRACE_PERIOD_MINUTES = 15
 
 class TicketService(ITicketService):
     """
