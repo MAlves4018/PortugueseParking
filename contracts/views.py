@@ -8,7 +8,7 @@ from parking.models import ParkingSlot, Gate
 from .models import RegularContract
 from .services import TicketService
 from parking.services import PricingService, PaymentService
-
+from django.http import JsonResponse
 from django.db.models import Exists, OuterRef
 import logging
 
@@ -66,9 +66,7 @@ def season_ticket_new(request):
     service = _build_ticket_service()
     vehicles = Vehicle.objects.filter(owner=request.user)
 
-    slots = ParkingSlot.objects.select_related("slot_type", "area").order_by(
-        "area__name", "number"
-    )
+    slots = []
 
     errors = []
     form_data = {}
@@ -174,6 +172,46 @@ def season_ticket_new(request):
     }
     return render(request, "contracts/season_ticket_form.html", context)
 
+@login_required
+def api_available_slots(request):
+    """
+    AJAX endpoint: returns the list of available slots for a given
+    vehicle and period, as JSON. Used to dynamically populate the
+    slot dropdown in the season ticket form.
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "Only POST allowed"}, status=405)
+
+    vehicle_id = request.POST.get("vehicle_id")
+    valid_from_raw = request.POST.get("valid_from")
+    valid_to_raw = request.POST.get("valid_to")
+
+    # Basic validation – if anything is missing, just return empty list
+    if not vehicle_id or not valid_from_raw or not valid_to_raw:
+        return JsonResponse({"slots": []})
+
+    vf = parse_datetime(valid_from_raw)
+    vt = parse_datetime(valid_to_raw)
+
+    if not vf or not vt or vf >= vt:
+        return JsonResponse({"slots": []})
+
+    try:
+        vehicle = Vehicle.objects.get(pk=vehicle_id, owner=request.user)
+    except Vehicle.DoesNotExist:
+        return JsonResponse({"slots": []})
+
+    slots = _get_available_slots_for(vehicle, vf, vt)
+
+    slot_list = [
+        {
+            "id": slot.id,
+            "label": f"{slot.area.name} / {slot.number} ({slot.slot_type.name})",
+        }
+        for slot in slots
+    ]
+
+    return JsonResponse({"slots": slot_list})
 
 @login_required
 def season_ticket_list(request):

@@ -56,22 +56,29 @@ class PricingService(AbstractPricingService):
         Determine the pricing category for the given slot.
 
         Rules:
-        - SIMPLE -> SIMPLE
-        - OVERSIZE -> OVERSIZE
-        - EXTENDED:
-            - if the slot is accessible, we charge as SIMPLE
-            - otherwise we charge as EXTENDED
+        - SIMPLE  -> rank 1
+        - EXTENDED -> rank 2
+        - OVERSIZE -> rank 3
+        - Accessible EXTENDED is billed as SIMPLE
         """
-        code = slot.slot_type.code.upper()
 
-        if code == "EXTENDED" and slot.is_accessible:
+        # Prefer an explicit mapping by size_rank
+        rank = getattr(slot.slot_type, "size_rank", 1)
+        print(slot.slot_type)
+        if rank == 1:
+            category = "SIMPLE"
+        elif rank == 2:
+            category = "EXTENDED"
+        elif rank == 3:
+            category = "OVERSIZE"
+        else:
+            # Fallback: unknown ranks are treated as SIMPLE
+            category = "SIMPLE"
+
+        # Accessibility rule: extended accessible -> simple price
+        if category == "EXTENDED" and getattr(slot, "is_accessible", False):
             return "SIMPLE"
-
-        if code in {"SIMPLE", "EXTENDED", "OVERSIZE"}:
-            return code
-
-        # Fallback: treat unknown types as SIMPLE
-        return "SIMPLE"
+        return category
 
     def get_season_price(self, slot_id, period):
         """

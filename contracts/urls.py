@@ -11,4 +11,5 @@ urlpatterns = [
     path("gate-occasional-entry/", views.gate_occasional_entry, name="gate_occasional_entry"),
     path("gate-occasional-exit/", views.gate_occasional_exit, name="gate_occasional_exit"),
     path("occasional-cash-device/", views.occasional_cash_device, name="occasional_cash_device"),
+    path("season-tickets/api/available-slots/",views.api_available_slots, name="api_available_slots")
 ]

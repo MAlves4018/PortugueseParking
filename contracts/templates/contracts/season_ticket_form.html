@@ -126,7 +126,7 @@
 
               <div class="mb-3">
                 <label class="form-label">Vehicle</label>
-                <select name="vehicle_id" class="form-select">
+                <select name="vehicle_id" id="vehicle_id" class="form-select">
                   <option value="">-- choose vehicle --</option>
                   {% for v in vehicles %}
                   <option value="{{ v.id }}"
@@ -140,20 +140,21 @@
               <div class="row">
                 <div class="col-md-6 mb-3">
                   <label class="form-label">Valid from</label>
-                  <input type="datetime-local" name="valid_from" class="form-control"
+                  <input type="datetime-local" name="valid_from" id="valid_from" class="form-control"
                          value="{{ form_data.valid_from|default_if_none:'' }}">
                 </div>
                 <div class="col-md-6 mb-3">
                   <label class="form-label">Valid to</label>
-                  <input type="datetime-local" name="valid_to" class="form-control"
+                  <!-- ID CORRIGIDO AQUI -->
+                  <input type="datetime-local" name="valid_to" id="valid_to" class="form-control"
                          value="{{ form_data.valid_to|default_if_none:'' }}">
                 </div>
               </div>
 
               <div class="mb-3">
                 <label class="form-label">Parking slot</label>
-                <select name="slot_id" class="form-select">
-                  <option value="">-- choose slot --</option>
+                <select name="slot_id" id="slot_id" class="form-select">
+                  <option value="">-- choose vehicle and period first --</option>
                   {% for s in slots %}
                   <option value="{{ s.id }}"
                     {% if form_data.slot_id == s.id|stringformat:'s' %}selected{% endif %}>
@@ -162,8 +163,7 @@
                   {% endfor %}
                 </select>
                 <div class="form-text">
-                  After choosing vehicle and period, this list is filtered to show only compatible
-                  and available slots.
+                  After choosing vehicle and period, this list is automatically filtered to show only compatible and available slots.
                 </div>
               </div>
 
@@ -201,4 +201,82 @@
         </div>
     </div>
 </div>
+
+<!-- SCRIPT TEM DE ESTAR DENTRO DO BLOCK CONTENT -->
+<script>
+(function () {
+  const vehicleSelect = document.getElementById("vehicle_id");
+  const fromInput = document.getElementById("valid_from");
+  const toInput = document.getElementById("valid_to");
+  const slotSelect = document.getElementById("slot_id");
+  const csrfTokenInput = document.querySelector("[name=csrfmiddlewaretoken]");
+
+  if (!vehicleSelect || !fromInput || !toInput || !slotSelect || !csrfTokenInput) {
+    return;
+  }
+
+  const csrfToken = csrfTokenInput.value;
+
+  function clearSlots(placeholderText) {
+    slotSelect.innerHTML = "";
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = placeholderText || "-- choose vehicle and period first --";
+    slotSelect.appendChild(opt);
+  }
+
+  function fetchSlotsIfReady() {
+    const vehicleId = vehicleSelect.value;
+    const vf = fromInput.value;
+    const vt = toInput.value;
+
+    if (!vehicleId || !vf || !vt) {
+      clearSlots("-- choose vehicle and period first --");
+      return;
+    }
+
+    fetch("{% url 'contracts:api_available_slots' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrfToken,
+        "X-Requested-With": "XMLHttpRequest",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        vehicle_id: vehicleId,
+        valid_from: vf,   // <- vírgula aqui
+        valid_to: vt,
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (!data.slots || data.slots.length === 0) {
+        clearSlots("No available slot for this period");
+        return;
+      }
+
+      slotSelect.innerHTML = "";
+      const defaultOpt = document.createElement("option");
+      defaultOpt.value = "";
+      defaultOpt.textContent = "-- select a parking slot --";
+      slotSelect.appendChild(defaultOpt);
+
+      data.slots.forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s.id;
+        opt.textContent = s.label;
+        slotSelect.appendChild(opt);
+      });
+    })
+    .catch(err => {
+      console.error("Error fetching slots", err);
+      clearSlots("Error loading slots");
+    });
+  }
+
+  vehicleSelect.addEventListener("change", fetchSlotsIfReady);
+  fromInput.addEventListener("change", fetchSlotsIfReady);
+  toInput.addEventListener("change", fetchSlotsIfReady);
+})();
+</script>
 {% endblock %}
