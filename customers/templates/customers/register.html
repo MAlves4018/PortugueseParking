@@ -258,7 +258,7 @@
 
                 {% with field=form.billing_info %}
                 <div class="input-box">
-                    <label for="{{ field.id_for_label }}" style="position: static; transform: none; display: block; margin-bottom: 5px;">Morada (Faturação)</label>
+                    <label for="{{ field.id_for_label }}" style="position: static; transform: none; display: block; margin-bottom: 5px;">Billing Info</label>
                     {{ field }} {% if field.help_text %} <small class="form-text text-muted">{{ field.help_text }}</small> {% endif %}
                     <div class="text-danger">{{ field.errors }}</div>
                 </div>
