@@ -77,3 +77,161 @@ If you are using pycharm, make sure to have the latest 2025 version installed, o
 ### 2.3 Dependency Injection
 A very often used concept in software-design is **dependency injection** (or inversion of control). A very, very good intro-video regarding DI (dependency injection) can be found on *youtube*, ["Dependency Injection, The Best Pattern"](https://www.youtube.com/embed/J1f5b4vcxCQ?si=Qb4pFAWWazOvzPjm). 
 For `Django projects`initialization code is needed to work with the package [*dependency-injector*](https://pypi.org/project/dependency-injector/) --> https://python-dependency-injector.ets-labs.org/examples/django.html
+
+## 3. PortugueseParking – Project Overview
+
+**PortugueseParking** is a Django-based parking management system implementing the following use cases:
+
+* **UC1 – Purchase Season Ticket**
+* **UC2 – Entry / Exit with Season Ticket**
+* **UC3 – Occasional Parking (Single-use tickets)**
+
+The system follows a **layered architecture**:
+
+* **UI Layer**: Django views and templates
+* **Business Logic**: Service layer (`TicketService`, `SlotService`)
+* **Persistence**: Django ORM
+* **Infrastructure**: PricingService, PaymentService
+
+All use cases are fully implemented, tested, and accessible through the UI.
+
+
+
+## 4. Login Credentials (Test User)
+
+```
+Username: demo
+Password: demo123
+```
+
+
+
+## 5. Test Data Included
+
+The database is intentionally pre-populated to allow immediate testing.
+
+### Parking Structure
+
+* Areas: Baixa de Lisboa, Lisboa Norte
+* Slot Types: SIMPLE, EXTENDED, OVERSIZE
+* Accessible and non-accessible slots
+* Entry and exit gates per area
+
+### Vehicles
+
+* `11-AA-11`
+* `22-BB-22`
+* `33-CC-33` (disability permit)
+
+### Active Season Ticket
+
+* Vehicle: `11-AA-11`
+* Valid for current period
+  This allows direct testing of UC2 without setup.
+
+
+## 6. How to Test Each Use Case
+
+### UC1 – Purchase Season Ticket
+
+```
+/contracts/season/new/
+```
+
+Steps:
+
+1. Select vehicle
+2. Select period
+3. Choose compatible slot
+4. Preview price
+5. Confirm purchase
+
+
+### UC2 – Entry / Exit with Season Ticket
+
+Entry:
+
+```
+/contracts/gate/entry/
+```
+
+Exit:
+
+```
+/contracts/gate/exit/
+```
+
+
+### UC3 – Occasional Parking
+
+Entry:
+
+```
+/contracts/gate/occasional/entry/
+```
+
+Cash Device:
+
+```
+/contracts/occasional/cash/
+```
+
+Exit:
+
+```
+/contracts/gate/occasional/exit/
+```
+
+
+
+## 7. Testing Strategy
+
+### Unit Tests (Service Layer)
+
+* UC1, UC2, UC3 business logic
+* ORM, pricing and payment mocked
+* No database dependency
+
+### UI Tests (Views)
+
+* Django test client
+* Services mocked
+* Template rendering and form behavior verified
+
+This fulfills the assignment requirement for **isolated UI tests**.
+
+
+
+## 8. Project Structure
+
+```
+PortugueseParking/
+├── contracts/        # Tickets, contracts, movements, services, tests
+├── parking/          # Areas, slots, gates, pricing, statistics
+├── vehicles/         # Vehicle domain
+├── customers/        # Authentication and users
+├── swd_django_demo/  # Django project configuration
+├── db.sqlite3        # Pre-filled test database
+├── README.md
+```
+
+
+
+## 9. Final Remarks
+
+This repository represents a **complete, testable, and demonstrable prototype**, aligned with:
+
+* UML models
+* Functional requirements
+* Software architecture principles
+* Assignment specifications
+
+The project is ready for:
+
+* evaluation
+* live demonstration
+* screencast recording
+
+
+## Note
+To view a walk throught of the application go to: https://youtu.be/2o_6T_fGMeQ 
